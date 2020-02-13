@@ -1,0 +1,40 @@
+version: '2'
+services:
+  frontend:
+    image: node
+    links:
+      - api
+    command: ["tail", "-f", "/dev/null"]
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./frontend:/usr/src/app
+    container_name: guardia-frontend
+
+  api:
+    image: python-guardia
+    build:
+      context: ./
+      dockerfile: ./dev/dockerfiles/api/Dockerfile
+    container_name: guardia-api
+    command: ["tail", "-f", "/dev/null"]
+    ports:
+      - '8000:8000'
+    links:
+      - db
+    volumes:
+      - ./api:/opt/project/app
+
+  db:
+    image: mysql
+    container_name: guardia-mysql
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+     - MYSQL_ROOT_PASSWORD=123123
+     - MYSQL_DATABASE=guardia
+     - MYSQL_USER=guardia
+     - MYSQL_PASSWORD=123123
+    volumes:
+      - ./dev/data/mysql:/var/lib/mysql
+    ports:
+      - '3306:3306'
