@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'corsheaders',
 
     'student.apps.StudentConfig',
+    'planning.apps.PlanningConfig',
 ]
 
 MIDDLEWARE = [
