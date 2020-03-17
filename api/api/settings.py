@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 
     'student.apps.StudentConfig',
     'planning.apps.PlanningConfig',
+    'repoPlan.apps.RepoplanConfig',
 ]
 
 MIDDLEWARE = [
