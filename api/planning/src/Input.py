@@ -8,9 +8,10 @@ from .Shift import Shift
 class Input:
 
     def __init__(self, typeGuard):
-        self.personal
+        self.personal = ""
         self.shifts = []
-        self.constraints = []
+        self.constraints_weak = []
+        self.constraints_strong = []
         self.typeGuard = typeGuard
         self.generateInput()
 
@@ -28,8 +29,12 @@ class Input:
             pass
 
     def makeConstraint(self):
-        constraints = settingApp.CONSTRAINT_PROFESOR if self.typeGuard == 'P' else settingApp.CONSTRAINT_STUDENT
-        for i in constraints:
-            self.constraints.append(i)
+        constraints_weak = settingApp.CONSTRAINT_PROFESOR_WEAK if self.typeGuard == 'P' else settingApp.CONSTRAINT_STUDENT_WEAK
+        for i in constraints_weak:
+            self.constraints_weak.append(i)
+
+        constraints_strong = settingApp.CONSTRAINT_PROFESOR_STRONG if self.typeGuard == 'P' else settingApp.CONSTRAINT_STUDENT_STRONG
+        for i in constraints_strong:
+            self.constraints_strong.append(i)
 
 

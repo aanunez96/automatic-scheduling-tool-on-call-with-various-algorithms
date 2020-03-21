@@ -1,4 +1,4 @@
-from ..SpecificAlgorithm import SpecificAlgorithm
+from ..specificAlgorithm import SpecificAlgorithm
 
 ALGORITHM_PROFESOR = {
     'metaHeuristic': SpecificAlgorithm()
