@@ -4,6 +4,7 @@ from planning import settingApp
 from planning.models import Iteration
 from planning.src.Plan import Plan
 from repoPlan.models import Shift
+import copy
 
 
 class Composer:
@@ -13,10 +14,10 @@ class Composer:
         self.plans_profesor = []
 
     def compose(self, algorithmProfesor, algorithmStudent):
-        inputProfesor = Input('P')
-        inputStudent = Input('S')
-        self.generateForAlgorithm(inputProfesor, algorithmProfesor, 'P') if algorithmProfesor else self.generateAll(inputProfesor, 'P')
-        self.generateForAlgorithm(inputStudent, inputStudent, 'S') if algorithmStudent else self.generateAll(inputStudent, 'S')
+        input_profesor = Input('P')
+        input_student = Input('S')
+        self.generateForAlgorithm(input_profesor, algorithmProfesor, 'P') if algorithmProfesor else self.generateAll(input_profesor, 'P')
+        self.generateForAlgorithm(input_student, algorithmStudent, 'S') if algorithmStudent else self.generateAll(input_student, 'S')
         best_solution_student = CompareSolutions.compare(self.plans_student)
         self.safe(best_solution_student)
         best_solution_profesor = CompareSolutions.compare(self.plans_profesor)
@@ -25,13 +26,15 @@ class Composer:
     def generateAll(self, inputForAlg,typeGuard):
         algorithms = settingApp.ALGORITHM_PROFESOR if typeGuard == 'P' else settingApp.ALGORITHM_STUDENT
         for nameAlgorithm, algorithm in algorithms.items():
-            plan = Plan(algorithm.generate(inputForAlg.personal, inputForAlg.shifts, inputForAlg.constraints_strong, inputForAlg.constraints_weak), nameAlgorithm)
+            shifts = copy.deepcopy(inputForAlg.shifts)
+            plan = Plan(algorithm.generate(inputForAlg.personal, shifts, inputForAlg.constraints_strong, inputForAlg.constraints_weak), nameAlgorithm)
             self.plans_profesor.append(plan) if typeGuard == 'P' else self.plans_student.append(plan)
 
     def generateForAlgorithm(self, inputForAlg, algorithms, typeGuard):
         algorithmsSetting = settingApp.ALGORITHM_PROFESOR if typeGuard == 'P' else settingApp.ALGORITHM_STUDENT
         for algorithm in algorithms:
-            plan = Plan(algorithmsSetting[algorithm].generate(inputForAlg.personal, inputForAlg.shifts, inputForAlg.constraints_strong,inputForAlg.constraints_weak), algorithm)
+            shifts = copy.deepcopy(inputForAlg.shifts)
+            plan = Plan(algorithmsSetting[algorithm].generate(inputForAlg.personal, shifts, inputForAlg.constraints_strong,inputForAlg.constraints_weak), algorithm)
             self.plans_profesor.append(plan) if typeGuard == 'P' else self.plans_student.append(plan)
 
     def safe(self, plan):
@@ -40,7 +43,6 @@ class Composer:
         for shift in plan.shifts:
             created_shift = Shift(date=shift.date, number=shift.number, person=shift.person.idUci, iteration=iteration.id)
             created_shift.save()
-
 
 
 
