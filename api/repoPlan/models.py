@@ -22,7 +22,7 @@ class ManagerShift(models.Manager):
 class Shift(models.Model):
     date = models.DateTimeField()
     number = models.IntegerField(blank=False, null=False)
-    person = models.OneToOneField(person.idUci, on_delete=models.CASCADE)
+    person = models.OneToOneField(person, on_delete=models.CASCADE)
     iteration = models.ForeignKey(Iteration, on_delete=models.CASCADE)
     object = models.Manager()
     manager = ManagerShift()

@@ -19,19 +19,28 @@ class InputStudentManager(models.Manager):
 class Personal(models.Model):
     sex = models.BinaryField(blank=False, null=False)
     children = models.BooleanField()
-    role = models.CharField(max_length=1, blank=False, null=False)
+    ROLES = (
+        ('S', 'Student'),
+        ('P', 'Profesor'),
+    )
+    role = models.CharField(max_length=1, choices=ROLES, blank=False, null=False, default='P')
     available = models.BooleanField()
-    idUci = models.OneToOneField(person.idUci, on_delete=models.CASCADE)
+    idUci = models.OneToOneField(person, on_delete=models.CASCADE)
     object = models.Manager()
     profesor = InputProfesorManager()
     student = InputStudentManager
 
+
 class Iteration(models.Model):
     id = models.AutoField(primary_key=True)
-    type_guard = models.CharField(max_length=1, blank=False, null=False)
+    GUARDS = (
+        ('S', 'Student'),
+        ('P', 'Profesor'),
+    )
+    type_guard = models.CharField(max_length=1, choices=GUARDS, blank=False, null=False, default='P')
     algorithm = models.CharField(max_length=200, blank=False, null=False)
     heuristic = models.IntegerField(blank=False, null=False)
-    executor = models.OneToOneField(person.idUci, on_delete=models.CASCADE)
+    executor = models.OneToOneField(person, on_delete=models.CASCADE, blank=True, null=True)
     object = models.Manager()
 
 

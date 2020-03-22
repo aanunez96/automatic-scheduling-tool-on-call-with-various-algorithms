@@ -41,7 +41,7 @@ class Composer:
         iteration = Iteration(algorithm=plan.algorihtm, heuristic=plan.heuristic)
         iteration.save()
         for shift in plan.shifts:
-            created_shift = Shift(date=shift.date, number=shift.number, person=shift.person.idUci, iteration=iteration.id)
+            created_shift = Shift(date=shift.date, number=shift.number, person=shift.person.Uci, iteration=iteration.id)
             created_shift.save()
 
 
