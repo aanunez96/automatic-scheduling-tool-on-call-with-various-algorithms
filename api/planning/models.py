@@ -28,7 +28,13 @@ class Personal(models.Model):
     idUci = models.OneToOneField(person, on_delete=models.CASCADE)
     object = models.Manager()
     profesor = InputProfesorManager()
-    student = InputStudentManager
+    student = InputStudentManager()
+
+
+class ManagerIteration(models.Manager):
+    def last_iteration(self):
+        max = Iteration.object.aggregate(models.Max('id'))
+        return Iteration(Iteration.object.get(id=max)).date_end
 
 
 class Iteration(models.Model):
@@ -41,7 +47,10 @@ class Iteration(models.Model):
     algorithm = models.CharField(max_length=200, blank=False, null=False)
     heuristic = models.IntegerField(blank=False, null=False)
     executor = models.OneToOneField(person, on_delete=models.CASCADE, blank=True, null=True)
+    date_start = models.DateField()
+    date_end = models.DateField()
     object = models.Manager()
+    manager = ManagerIteration()
 
 
 

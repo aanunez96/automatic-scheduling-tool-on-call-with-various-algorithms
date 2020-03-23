@@ -1,11 +1,10 @@
-from ..settingApp import *
-from .Plan import Plan
-
+from planning.settingApp import *
+from planning.src import Plan
+from planning.src import Shift
 
 class CompareSolutions:
     def compare(self, plans, typeGuard):
         planToReturn = Plan()
-
         for plan in plans:
             plan.heuristic = self.heuristic(plan.shifts, typeGuard)
             if plan.heuristic > planToReturn.heuristic:
