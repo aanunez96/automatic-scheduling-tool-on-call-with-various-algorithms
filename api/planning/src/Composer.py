@@ -4,6 +4,7 @@ from planning import settingApp
 from planning.models import Iteration
 from planning.src.Plan import Plan
 from repoPlan.models import Shift
+from personal.models import Person
 import copy
 
 
@@ -38,15 +39,16 @@ class Composer:
             self.plans_profesor.append(plan) if typeGuard == 'P' else self.plans_student.append(plan)
 
     def safe(self, plan, type_guard):
-        last_shift = plan.shifts[-1].number
-        number = Iteration.manager.last_iteration(type_guard)+1
-        iteration = Iteration(algorithm=plan.algorihtm, heuristic=plan.heuristic, number=number, type_guard=type_guard, last_shift=last_shift, date_start=plan.shifts[0].date, date_end=plan.shifts[-1].date)
+        number = Iteration.manager.last_iteration_number(type_guard)+1
+        iteration = Iteration(algorithm=plan.algorihtm, heuristic=plan.heuristic, number=number, type_guard=type_guard, date_start=plan.shifts[0].date, date_end=plan.shifts[-1].date)
         iteration.save()
 
         for shift in plan.shifts:
-            created_shift = Shift(date=shift.date, number=shift.number, person=shift.personal.idUci, iteration=iteration)
+            created_shift = Shift(date=shift.date, number=shift.number, iteration=iteration)
             created_shift.save()
-
+            for personal in shift.personal:
+                person = personal.idUci
+                person.shift.add(created_shift)
         return iteration.id
 
 

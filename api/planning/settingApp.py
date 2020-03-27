@@ -1,11 +1,12 @@
 from specificAlgorithm.SpecificAlgorithm import SpecificAlgorithm
+from student_algorithm.static_algorithm import StaticAlgorithm
 
 ALGORITHM_PROFESOR = {
     'metaHeuristic': SpecificAlgorithm()
 }
 
 ALGORITHM_STUDENT = {
-    'metaHeuristic': SpecificAlgorithm()
+    'Static': StaticAlgorithm()
 }
 
 SHIFT_FOR_PROFESOR = {

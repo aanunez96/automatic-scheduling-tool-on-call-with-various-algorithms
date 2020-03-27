@@ -3,6 +3,7 @@ from planning.models import Personal
 from planning.models import Iteration
 from planning import settingApp
 from planning.src.Shift import Shift
+from repoPlan.models import Shift as ShiftModel
 
 
 class Input:
@@ -22,14 +23,15 @@ class Input:
 
     def makeShift(self):
         last_iteration = Iteration.manager.date_last_iteration(self.typeGuard)
-        last_shift = Iteration.manager.last_shift_last_iteration(self.typeGuard)
+        last_shift = ShiftModel.manager.last_shift_last_iteration(self.typeGuard)
         total_shift = Personal.profesor.all().count()
         shifts = []
         counter = 0
 
         if last_shift != 0:
             for number in range(last_shift+1, self.shif_amount(last_iteration)+1):
-                shifts.append(Shift(number, last_iteration))
+                date_shift = last_iteration + timedelta(days=number)
+                shifts.append(Shift(number, date_shift))
                 counter += 1
 
         while counter < total_shift:
