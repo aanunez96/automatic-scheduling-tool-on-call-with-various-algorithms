@@ -48,7 +48,7 @@ class Composer:
             created_shift.save()
             for personal in shift.personal:
                 person = personal.idUci
-                person.shift.add(created_shift)
+                created_shift.person.add(person)
         return iteration.id
 
 
