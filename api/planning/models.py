@@ -17,8 +17,12 @@ class InputStudentManager(models.Manager):
 
 
 class Personal(models.Model):
-    sex = models.BinaryField(blank=False, null=False)
-    children = models.BooleanField()
+    SEX = (
+        ('M', 'Male'),
+        ('F', 'Female'),
+    )
+    sex = models.CharField(max_length=1, choices=SEX, blank=False, null=False)
+    children = models.BooleanField(default=True)
     ROLES = (
         ('S', 'Student'),
         ('P', 'Profesor'),

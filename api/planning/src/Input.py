@@ -22,25 +22,35 @@ class Input:
         self.makeConstraint()
 
     def makeShift(self):
-        last_iteration = Iteration.manager.date_last_iteration(self.typeGuard)
-        last_shift = ShiftModel.manager.last_shift_last_iteration(self.typeGuard)
-        total_shift = Personal.profesor.all().count()
+        date_last_iteration = Iteration.manager.date_last_iteration(self.typeGuard)
         shifts = []
-        counter = 0
+        if self.typeGuard == 'P':
+            last_shift = ShiftModel.manager.last_shift_last_iteration(self.typeGuard)
+            total_shift = Personal.profesor.all().count()
+            counter = 1
+            shifts_amount = self.shif_amount(date_last_iteration)
 
-        if last_shift != 0:
-            for number in range(last_shift+1, self.shif_amount(last_iteration)+1):
-                date_shift = last_iteration + timedelta(days=number)
-                shifts.append(Shift(number, date_shift))
-                counter += 1
+            if last_shift == (0 or shifts_amount[-1]):
+                for number in shifts_amount[shifts_amount.index(last_shift)+1:]:
+                    shifts.append(Shift(number, date_last_iteration))
 
-        while counter < total_shift:
-            date_shift = last_iteration + timedelta(days=counter)
-            for number in range(1, self.shif_amount(date_shift)+1):
-                if counter >= total_shift:
-                    break
-                shifts.append(Shift(number, date_shift))
-                counter += 1
+            while counter < total_shift:
+                date_shift = date_last_iteration + timedelta(days=counter)
+                for number in self.shif_amount(date_shift):
+                    if counter >= total_shift:
+                        break
+                    shifts.append(Shift(number, date_shift))
+                    counter += 1
+        else:
+            date_end = Iteration.manager.date_last_iteration('P')
+            total_days = date_end - date_last_iteration
+            print(date_last_iteration)
+            print(date_end)
+            print(total_days)
+            for counter in range(1, total_days.days + 1):
+                date_shift = date_last_iteration + timedelta(days=counter)
+                for number in self.shif_amount(date_shift):
+                    shifts.append(Shift(number, date_shift))
 
         self.shifts = shifts
 

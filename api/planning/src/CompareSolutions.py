@@ -25,9 +25,7 @@ class CompareSolutions:
             heuristic = 0
 
             for constraint in constraints:
-                print('aki')
-                evauluate = constraint.evaluate_heuristic(shifts)
-                heuristic += evauluate
+                heuristic += constraint.evaluate_heuristic(shifts)
 
             return heuristic
 
