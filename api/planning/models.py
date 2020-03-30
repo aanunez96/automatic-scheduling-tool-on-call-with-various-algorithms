@@ -22,13 +22,13 @@ class Personal(models.Model):
         ('F', 'Female'),
     )
     sex = models.CharField(max_length=1, choices=SEX, blank=False, null=False)
-    children = models.BooleanField(default=True)
+    children = models.BooleanField()
     ROLES = (
         ('S', 'Student'),
         ('P', 'Profesor'),
     )
     role = models.CharField(max_length=1, choices=ROLES, blank=False, null=False, default='P')
-    available = models.BooleanField()
+    available = models.BooleanField(default=True)
     idUci = models.OneToOneField('personal.Person', on_delete=models.CASCADE)
     object = models.Manager()
     profesor = InputProfesorManager()

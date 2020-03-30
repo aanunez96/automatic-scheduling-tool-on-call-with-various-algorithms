@@ -3,7 +3,7 @@ from planning.models import Personal
 from planning.models import Iteration
 from planning import settingApp
 from planning.src.Shift import Shift
-from repoPlan.models import Shift as ShiftModel
+from repoPlan.FacadeRepoPlan import FacadeRepo
 
 
 class Input:
@@ -24,8 +24,9 @@ class Input:
     def makeShift(self):
         date_last_iteration = Iteration.manager.date_last_iteration(self.typeGuard)
         shifts = []
+        repo_plan = FacadeRepo()
         if self.typeGuard == 'P':
-            last_shift = ShiftModel.manager.last_shift_last_iteration(self.typeGuard)
+            last_shift = repo_plan.last_shift_last_iteration(self.typeGuard)
             total_shift = Personal.profesor.all().count()
             counter = 1
             shifts_amount = self.shif_amount(date_last_iteration)

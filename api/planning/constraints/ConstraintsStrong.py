@@ -1,5 +1,4 @@
 from planning.constraints.Constriant import Constraint
-from repoPlan.models import Shift
 
 
 class WithSmallChildren(Constraint):
