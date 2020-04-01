@@ -46,3 +46,21 @@ class WomanStudentShift(Constraint):
                 return True
             else:
                 return False
+
+
+class SpecificDays(Constraint):
+    def validate(self, shift, personal):
+        day = {
+            'Mon': '1',
+            'Tue': '2',
+            'Wed': '3',
+            'Thu': '4',
+            'Fri': '5',
+            'Sat': '6',
+            'Sun': '7',
+        }
+
+        if personal.days.find(day[shift.date.strftime('%a')]) != -1:
+            return False
+        else:
+            return True

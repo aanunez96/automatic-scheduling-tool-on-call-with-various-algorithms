@@ -35,6 +35,7 @@ CONSTRAINT_PROFESOR_STRONG = {
     WithSmallChildren(),
     OnlyOnceAMonth(),
     WomanProfesorShift(),
+    SpecificDays(),
 }
 
 CONSTRAINT_PROFESOR_WEAK = {

@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from datetime import date
+from django.core.validators import validate_comma_separated_integer_list
 
 
 # Create your models here.
@@ -27,6 +28,7 @@ class Personal(models.Model):
         ('S', 'Student'),
         ('P', 'Profesor'),
     )
+    days = models.CharField(validators=[validate_comma_separated_integer_list], max_length=20, default='')
     role = models.CharField(max_length=1, choices=ROLES, blank=False, null=False, default='P')
     available = models.BooleanField(default=True)
     idUci = models.OneToOneField('personal.Person', on_delete=models.CASCADE)
@@ -74,12 +76,3 @@ class Iteration(models.Model):
     manager = ManagerIteration()
 
 
-
-
-#class Shift(models.Model):
- #   number = models.IntegerField(blank=False, null=False)
-#  date = models.DateTimeField(blank=False, null=False)
-#    person = models.OneToOneField(Personal, blank=True, null=True)
-
-#    class Meta:
- #       abstract = True

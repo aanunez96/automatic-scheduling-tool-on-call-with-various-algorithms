@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from .models import Iteration
-from .models import Personal
+from planning.models import Iteration
+from planning.models import Personal
 
 from django.contrib import admin
 
