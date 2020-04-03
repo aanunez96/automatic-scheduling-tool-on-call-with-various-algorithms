@@ -12,3 +12,6 @@ class Person (models.Model):
     Uci = models.CharField(max_length=200, blank=False, null=False)
     object = models.Manager()
     manager = MangerPerson()
+
+    def __str__(self):
+        return self.Uci

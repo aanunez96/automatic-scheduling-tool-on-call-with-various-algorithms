@@ -1,6 +1,5 @@
 from django.db import models
 from planning.models import Iteration
-from planning.models import Personal
 from personal.models import Person
 
 import datetime
@@ -44,3 +43,6 @@ class Shift(models.Model):
     iteration = models.ForeignKey(Iteration, on_delete=models.CASCADE)
     object = models.Manager()
     manager = ManagerShift()
+
+    def __str__(self):
+        return self.date+"-"+self.number

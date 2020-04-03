@@ -36,6 +36,9 @@ class Personal(models.Model):
     profesor = InputProfesorManager()
     student = InputStudentManager()
 
+    def __str__(self):
+        return self.idUci + "-" + self.role
+
 
 class ManagerIteration(models.Manager):
     def date_last_iteration(self, type_guard):
@@ -75,4 +78,5 @@ class Iteration(models.Model):
     object = models.Manager()
     manager = ManagerIteration()
 
-
+    def __str__(self):
+        return self.number
