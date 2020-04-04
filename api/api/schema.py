@@ -1,16 +1,16 @@
 from graphene import Schema
-
+from graphene import ObjectType
 from student.schema import StudentQuery
-from planning.schema import PersonalQuery, IterationlQuery
-from personal.schema import PersonQuery, PersonMutation
+from planning.schema import PersonalQuery, IterationQuery, PersonalMutation
+from personal.schema import PersonQuery
 from repoPlan.schema import ShiftQuery, ShiftMutation
 
 
-class RootQuery(StudentQuery, PersonQuery, PersonalQuery, ShiftQuery, IterationlQuery):
+class RootQuery(StudentQuery, PersonQuery, PersonalQuery, ShiftQuery, IterationQuery):
     pass
 
 
-class RootMutation(PersonMutation, ShiftMutation):
+class RootMutation(ShiftMutation, PersonalMutation, ObjectType):
     pass
 
 

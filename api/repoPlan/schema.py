@@ -22,22 +22,26 @@ class ShiftQuery(ObjectType):
     shift = DjangoFilterConnectionField(ShiftNode)
 
 
-class ShiftMutation(relay.ClientIDMutation):
+class UpdateShift(relay.ClientIDMutation):
     class Input:
-        date = graphene.Date(required=True)
-        number = graphene.Int(required=True)
-        person = graphene.ID(required=True)
-        iteration = graphene.ID(required=True)
-        id = graphene.ID()
+        person_remove = graphene.ID(required=True)
+        person_add = graphene.ID(required=True)
+        id = graphene.ID(required=True)
 
     shift = graphene.Field(ShiftNode)
 
     @classmethod
-    def mutate_and_get_payload(cls, root, info, date, number, person, iteration, id):
+    def mutate_and_get_payload(cls, root, info, person_remove, person_add, id):
         shift = Shift.objects.get(pk=from_global_id(id)[1])
-        shift.date = date
-        shift.person = person
-        shift.number = number
-        shift.iteration = iteration
+        shift.person.add(person_add)
+        shift.person.remove(person_remove)
+        shift2 = person_add.object.filter(shift__iteration=shift.iteration)
+        shift2.person.remove(person_add)
+        shift2.person.add(person_remove)
         shift.save()
-        return ShiftMutation(shift=shift)
+        shift2.save()
+        return ShiftQuery(shift=DjangoFilterConnectionField(shift))
+
+
+class ShiftMutation:
+    update_shift = UpdateShift().Field()
