@@ -8,6 +8,7 @@ from repoPlan.models import Shift
 from planning.constraints.ConstraintsStrong import OnlyOnceAMonth
 from personal.models import Person
 import copy
+from django.db import transaction,IntegrityError
 
 
 class Composer:
@@ -47,17 +48,22 @@ class Composer:
             self.plans_profesor.append(plan) if type_guard == 'P' else self.plans_student.append(plan)
 
     def safe(self, plan, type_guard):
-        number = Iteration.manager.last_iteration_number(type_guard)+1
-        iteration = Iteration(algorithm=plan.algorihtm, heuristic=plan.heuristic, number=number, type_guard=type_guard, date_start=plan.shifts[0].date, date_end=plan.shifts[-1].date)
-        iteration.save()
+        try:
+            with transaction.atomic():
+                number = Iteration.manager.last_iteration_number(type_guard)+1
+                iteration = Iteration(algorithm=plan.algorihtm, heuristic=plan.heuristic, number=number, type_guard=type_guard, date_start=plan.shifts[0].date, date_end=plan.shifts[-1].date)
+                iteration.save()
 
-        for shift in plan.shifts:
-            created_shift = Shift(date=shift.date, number=shift.number, iteration=iteration)
-            created_shift.save()
-            for personal in shift.personal:
-                person = personal.idUci
-                created_shift.person.add(person)
-        return iteration.id
+                for shift in plan.shifts:
+                    created_shift = Shift(date=shift.date, number=shift.number, iteration=iteration)
+                    created_shift.save()
+                    for personal in shift.personal:
+                        person = personal.person
+                        created_shift.person.add(person)
+#TODO: #revisar el transaction.on_commit() para la cola de mensajes
+                return iteration.id
+        except IntegrityError:
+            return -1
 
     def validate_solution(self, plan, type_guard):
         constraints = CONSTRAINT_PROFESOR_STRONG if type_guard == 'P' else CONSTRAINT_STUDENT_STRONG

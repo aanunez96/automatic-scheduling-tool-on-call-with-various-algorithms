@@ -31,13 +31,13 @@ class Personal(models.Model):
     days = models.CharField(validators=[validate_comma_separated_integer_list], max_length=20, default='')
     role = models.CharField(max_length=1, choices=ROLES, blank=False, null=False, default='P')
     available = models.BooleanField(default=True)
-    idUci = models.OneToOneField('personal.Person', on_delete=models.CASCADE)
+    person = models.OneToOneField('personal.Person', on_delete=models.CASCADE)
     object = models.Manager()
     profesor = InputProfesorManager()
     student = InputStudentManager()
 
     def __str__(self):
-        return self.idUci + "-" + self.role
+        return str(self.person) + "-" + self.role
 
 
 class ManagerIteration(models.Manager):
@@ -72,11 +72,11 @@ class Iteration(models.Model):
         ('P', 'Profesor'),
     )
     type_guard = models.CharField(max_length=1, choices=ROLES, blank=False, null=False, default='P')
-    executor = models.OneToOneField('personal.Person', on_delete=models.CASCADE, blank=True, null=True)
+    executor = models.OneToOneField('personal.Person', on_delete=models.SET_NULL, blank=True, null=True)
     date_start = models.DateField(blank=False, null=False)
     date_end = models.DateField(blank=False, null=False)
     object = models.Manager()
     manager = ManagerIteration()
 
     def __str__(self):
-        return self.number
+        return str(self.number) + '-' + self.type_guard

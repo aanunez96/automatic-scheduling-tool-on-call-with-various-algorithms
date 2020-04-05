@@ -10,7 +10,7 @@ class PersonNode(DjangoObjectType):
         model = Person
         use_connection = True
         filter_fields = {
-            'Uci': ['exact']
+            'uci': ['exact']
         }
 
 

@@ -9,18 +9,18 @@ import datetime
 class ManagerShift(models.Manager):
     def get_last_shift_for_person (self, personal, type_guard):
         last_iteration = Iteration.manager.last_iteration_id(type_guard)
-        shift = Shift.object.filter(person=personal.idUci).filter(iteration=last_iteration)
+        shift = Shift.object.filter(person=personal.person).filter(iteration=last_iteration)
         if len(shift) == 0:
             return 0
         else:
-            return Shift.object.filter(person=personal.idUci).get(iteration=last_iteration).number
+            return Shift.object.filter(person=personal.person).get(iteration=last_iteration).number
 
     def total_whitout_weekend_for_person(self, personal, type_guard):
         total_whitout_weekend = 0
         for iteration in Iteration.object.filter(type_guard=type_guard).order_by('-number'):
-            if len(Shift.object.filter(person=personal.idUci).filter(iteration=iteration)) == 0:
+            if len(Shift.object.filter(person=personal.person).filter(iteration=iteration)) == 0:
                 continue
-            shift = Shift.object.filter(person=personal.idUci).get(iteration=iteration).date.strftime('%a')
+            shift = Shift.object.filter(person=personal.person).get(iteration=iteration).date.strftime('%a')
             if shift == 'Sat' or shift == 'Sun':
                 total_whitout_weekend += 1
             else:
@@ -45,4 +45,4 @@ class Shift(models.Model):
     manager = ManagerShift()
 
     def __str__(self):
-        return self.date+"-"+self.number
+        return str(self.date)+"-"+str(self.number)
