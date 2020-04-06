@@ -73,10 +73,10 @@ class UpdatePersonal(relay.ClientIDMutation):
 
     @classmethod
     def mutate_and_get_payload(cls, root, info, available, id):
-        personal = Personal.objects.get(pk=from_global_id(id)[1])
+        personal = Personal.object.get(pk=id)
         personal.available = available
         personal.save()
-        return PersonalQuery(personal=DjangoFilterConnectionField(personal))
+        return UpdatePersonal(personal=personal)
 
 
 class PersonalMutation:
