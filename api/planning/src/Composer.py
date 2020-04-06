@@ -6,29 +6,39 @@ from planning.src.Plan import Plan
 from planning.settingApp import CONSTRAINT_PROFESOR_STRONG,CONSTRAINT_STUDENT_STRONG
 from repoPlan.models import Shift
 from planning.constraints.ConstraintsStrong import OnlyOnceAMonth
-from personal.models import Person
 import copy
-from django.db import transaction,IntegrityError
+from django.db import transaction, IntegrityError
 
 
 class Composer:
 
-    def __init__(self):
+    def __init__(self, message):
         self.plans_student = []
         self.plans_profesor = []
+        self.message = message
 
     def compose(self, algorithm_profesor, algorithm_student):
         returned = []
         compare = CompareSolutions()
 
         input_profesor = Input('P')
+        self.message.percent = 10
+        self.message.save()
         self.generateForAlgorithm(input_profesor, algorithm_profesor, 'P') if algorithm_profesor else self.generateAll(input_profesor, 'P')
+        self.message.percent = 50
+        self.message.save()
         best_solution_profesor = compare.compare(self.plans_profesor, 'P')
+        self.message.percent = 70
+        self.message.save()
         returned.append(self.safe(best_solution_profesor, 'P'))
 
         input_student = Input('S')
+        self.message.percent = 80
+        self.message.save()
         self.generateForAlgorithm(input_student, algorithm_student, 'S') if algorithm_student else self.generateAll(input_student, 'S')
         best_solution_student = compare.compare(self.plans_student, 'S')
+        self.message.percent = 90
+        self.message.save()
         returned.append(self.safe(best_solution_student, 'S'))
 
         return returned
@@ -51,7 +61,15 @@ class Composer:
         try:
             with transaction.atomic():
                 number = Iteration.manager.last_iteration_number(type_guard)+1
-                iteration = Iteration(algorithm=plan.algorihtm, heuristic=plan.heuristic, number=number, type_guard=type_guard, date_start=plan.shifts[0].date, date_end=plan.shifts[-1].date)
+                iteration = Iteration(
+                    algorithm=plan.algorihtm,
+                    heuristic=plan.heuristic,
+                    number=number,
+                    type_guard=type_guard,
+                    date_start=plan.shifts[0].date,
+                    date_end=plan.shifts[-1].date,
+                    message=self.message
+                )
                 iteration.save()
 
                 for shift in plan.shifts:
@@ -60,7 +78,6 @@ class Composer:
                     for personal in shift.personal:
                         person = personal.person
                         created_shift.person.add(person)
-#TODO: #revisar el transaction.on_commit() para la cola de mensajes
                 return iteration.id
         except IntegrityError:
             return -1
@@ -79,7 +96,3 @@ class Composer:
                         invalid_shifts.append((shift, constraint.description, personal))
 
         return invalid_shifts
-
-
-
-

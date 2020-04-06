@@ -1,7 +1,7 @@
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene import ObjectType, relay
-from planning.models import Personal, Iteration
+from planning.models import Personal, Iteration, MessageQueue, Parameters
 from graphql_relay import from_global_id
 import graphene
 
@@ -14,7 +14,7 @@ class PersonalNode(DjangoObjectType):
             'sex': ['iexact'],
             'children': ['exact'],
             'role': ['iexact'],
-            'idUci': ['exact'],
+            'person': ['exact'],
             'days': ['exact', 'icontains'],
             'available': ['exact'],
         }
@@ -32,6 +32,27 @@ class IterationNode(DjangoObjectType):
             'executor': ['exact'],
             'date_start': ['exact'],
             'date_end': ['exact'],
+        }
+
+
+class MessageNode(DjangoObjectType):
+    class Meta:
+        model = MessageQueue
+        use_connection = True
+        filter_fields = {
+            'state': ['iexact', 'exact'],
+            'percent': ['exact']
+        }
+
+
+class ParametersNode(DjangoObjectType):
+    class Meta:
+        model = Parameters
+        use_connection = True
+        filter_fields = {
+            'algorithm': ['exact'],
+            'type_guard': ['exact'],
+            'message': ['exact'],
         }
 
 
@@ -60,3 +81,29 @@ class UpdatePersonal(relay.ClientIDMutation):
 
 class PersonalMutation:
     update_personal = UpdatePersonal().Field()
+
+
+class CreateMessage(relay.ClientIDMutation):
+    class Input:
+        algorithmStudent = graphene.List(of_type=graphene.String)
+        algorithmProfesor = graphene.List(of_type=graphene.String)
+
+    message = graphene.Field(MessageNode)
+
+    @classmethod
+    def mutate_and_get_payload(cls, root, info, algorithmStudent, algorithmProfesor):
+        message = MessageQueue(state='pending', percent=0)
+        message.save()
+        if algorithmProfesor:
+            for algorithm in algorithmProfesor:
+                parameters = Parameters(algorithm=algorithm, type_guard='P', message=message)
+                parameters.save()
+        if algorithmStudent:
+            for algorithm in algorithmStudent:
+                parameters = Parameters(algorithm=algorithm, type_guard='S', message=message)
+                parameters.save()
+        return CreateMessage(message=message)
+
+
+class MessageMutation:
+    create_message = CreateMessage.Field()

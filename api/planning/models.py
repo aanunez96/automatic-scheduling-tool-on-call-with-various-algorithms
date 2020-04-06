@@ -40,6 +40,18 @@ class Personal(models.Model):
         return str(self.person) + "-" + self.role
 
 
+class MessageQueue(models.Model):
+    STATES = (
+        ('pending', 'Pending'),
+        ('processing', 'Processing'),
+        ('processed', 'Processed'),
+        ('error', 'Error'),
+    )
+    state = models.CharField(max_length=10, choices=STATES, blank=False, null=False, default='P')
+    percent = models.SmallIntegerField()
+    object = models.Manager()
+
+
 class ManagerIteration(models.Manager):
     def date_last_iteration(self, type_guard):
         max = Iteration.object.filter(type_guard=type_guard).aggregate(models.Max('number'))
@@ -75,8 +87,20 @@ class Iteration(models.Model):
     executor = models.OneToOneField('personal.Person', on_delete=models.SET_NULL, blank=True, null=True)
     date_start = models.DateField(blank=False, null=False)
     date_end = models.DateField(blank=False, null=False)
+    message = models.ForeignKey(MessageQueue, on_delete=models.SET_NULL, blank=True, null=True)
     object = models.Manager()
     manager = ManagerIteration()
 
     def __str__(self):
         return str(self.number) + '-' + self.type_guard
+
+
+class Parameters(models.Model):
+    algorithm = models.CharField(max_length=255, blank=False, null=False)
+    ROLES = (
+        ('S', 'Student'),
+        ('P', 'Profesor'),
+    )
+    type_guard = models.CharField(max_length=1, choices=ROLES, blank=False, null=False, default='P')
+    message = models.ForeignKey(MessageQueue, on_delete=models.CASCADE)
+    object = models.Manager()
