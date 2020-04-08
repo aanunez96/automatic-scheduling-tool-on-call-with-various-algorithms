@@ -23,9 +23,10 @@ class CompareSolutions:
         else:
             constraints = CONSTRAINT_PROFESOR_WEAK if type_guard == 'P' else CONSTRAINT_STUDENT_WEAK
             heuristic = 0
-
-            for constraint in constraints:
-                heuristic += constraint.evaluate_heuristic(shifts)
+            for shift in shifts:
+                for constraint in constraints:
+                    for personal in shift.personal:
+                        heuristic += constraint.evaluate_heuristic(shift, personal)
 
             return heuristic
 

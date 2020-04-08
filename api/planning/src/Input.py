@@ -29,18 +29,21 @@ class Input:
             last_shift = repo_plan.last_shift_last_iteration(self.type_guard)
             total_shift = Personal.profesor.all().count()
             counter = 1
+            day = 1
             shifts_amount = self.shif_amount(date_last_iteration)
 
             if last_shift == (0 or shifts_amount[-1]):
                 for number in shifts_amount[shifts_amount.index(last_shift)+1:]:
-                    shifts.append(Shift(number, date_last_iteration))
+                    shifts.append(Shift(counter, number, date_last_iteration))
+                    counter += 1
 
             while counter < total_shift:
-                date_shift = date_last_iteration + timedelta(days=counter)
+                date_shift = date_last_iteration + timedelta(days=day)
+                day += 1
                 for number in self.shif_amount(date_shift):
                     if counter >= total_shift:
                         break
-                    shifts.append(Shift(number, date_shift))
+                    shifts.append(Shift(counter, number, date_shift))
                     counter += 1
         else:
             date_end = Iteration.manager.date_last_iteration('P')
@@ -51,7 +54,7 @@ class Input:
             for counter in range(1, total_days.days + 1):
                 date_shift = date_last_iteration + timedelta(days=counter)
                 for number in self.shif_amount(date_shift):
-                    shifts.append(Shift(number, date_shift))
+                    shifts.append(Shift(number=number, date=date_shift))
 
         self.shifts = shifts
 

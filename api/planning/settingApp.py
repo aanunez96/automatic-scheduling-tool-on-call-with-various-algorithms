@@ -2,10 +2,11 @@ from specificAlgorithm.SpecificAlgorithm import SpecificAlgorithm
 from student_algorithm.static_algorithm import StaticAlgorithm
 from planning.constraints.ConstraintsWeak import Weekend, ShiftsRotations
 from planning.constraints.ConstraintsStrong import *
+from metaheuristic_algorithm.hybrid_metaheuristic import HybridMetaHeuristicGRASP
 
 
 ALGORITHM_PROFESOR = {
-    'metaHeuristic': SpecificAlgorithm()
+    'metaHeuristic': HybridMetaHeuristicGRASP()
 }
 
 ALGORITHM_STUDENT = {
