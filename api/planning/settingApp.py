@@ -3,6 +3,7 @@ from student_algorithm.static_algorithm import StaticAlgorithm
 from planning.constraints.ConstraintsWeak import Weekend, ShiftsRotations
 from planning.constraints.ConstraintsStrong import *
 from metaheuristic_algorithm.hybrid_metaheuristic import HybridMetaHeuristicGRASP
+from metaheuristic_algorithm.hybrid_metaheuristic_2 import Grasp
 
 
 ALGORITHM_PROFESOR = {
@@ -14,8 +15,8 @@ ALGORITHM_STUDENT = {
 }
 
 SHIFT_FOR_PROFESOR = {
-    'week': [1, 2, 4, 5],
-    'weekend': [8, 1, 2, 3, 4, 5],
+    'week': [1, 2, 3, 4, 5],
+    'weekend': [1, 2, 3, 4, 5, 7, 8],
 }
 
 SHIFT_FOR_STUDENT = {

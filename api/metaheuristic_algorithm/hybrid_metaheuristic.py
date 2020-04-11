@@ -4,7 +4,6 @@ from planning.constraints.ConstraintsStrong import OnlyOnceAMonth
 import copy
 
 
-
 class HybridMetaHeuristicGRASP(Algorithm):
 
     def generate(self, personal, shifts, constraint_strong, constraint_weak):
@@ -33,6 +32,8 @@ class HybridMetaHeuristicGRASP(Algorithm):
             cambio = False
 
             for profesor in profesors:
+                print('<<<<<profesor>>>>>')
+                print(profesor)
                 possible_shift = []
                 selected_shift = False
                 aux_heuristic_1 = 0
@@ -43,23 +44,47 @@ class HybridMetaHeuristicGRASP(Algorithm):
                 for shift_x_select in domain_profesors[profesor]:
                     if shift_x_select in empty_shift:
                         possible_shift.append(shift_x_select)
-                if possible_shift and profesor in profesors_outside:
-                    selected_shift = choice(possible_shift)
-                    possible_shift.remove(selected_shift)
-                    add_profesor = True
+# TODO: revizar lo de las mujeres con niños
+                # esto es para que los que tengan niños tengan priridad en la asiganacion
+                with_children = len(constraint_weak)+3 if personal[profesors.index(profesor)].children is True else 0
+                # esto es para compensar la heuristica pa que mientras menos turnos menos heuristica tengas
+                suport_heuristic = len(possible_shift) - with_children
+                print('<<<<<possible_shift>>>>>')
+                print(possible_shift)
+
+                if profesor in profesors_outside:
+                    if possible_shift:
+                        selected_shift = choice(possible_shift)
+
+                        print('<<<<<selected_shift add>>>>>')
+                        print(selected_shift)
+
+                        possible_shift.remove(selected_shift)
+                        add_profesor = True
+                else:
+                    selected_shift = copy.deepcopy(shift_assignment[profesor])
+                    print('<<<<<selected_shift>>>>>')
+                    print(selected_shift)
+
                 aux_profesor = copy.deepcopy(profesors_outside)
+
+                print('<<<<<aux_profesor>>>>>')
+                print(aux_profesor)
+
                 if profesor in aux_profesor:
                     aux_profesor.remove(profesor)
-                if not selected_shift:
-                    selected_shift = copy.deepcopy(shift_assignment[profesor])
                 new_profesor = self.la_pala(selected_shift, aux_profesor, domain_profesors)
                 if new_profesor and possible_shift:
                     new_shift = choice(possible_shift)
                     for constraint in constraint_weak:
                         aux_heuristic_1 += constraint.evaluate_heuristic(shifts[reference_shift.index(new_shift)], personal[profesors.index(profesor)])
                         aux_heuristic_2 += constraint.evaluate_heuristic(shifts[reference_shift.index(selected_shift)], personal[profesors.index(new_profesor)])
-                    if total_heuristic > (0 - aux_heuristic_2) + (0 - aux_heuristic_1):
-                        total_heuristic = (0 - aux_heuristic_2) + (0 - aux_heuristic_1)
+                    print('<<<<<heuristica 2 >>>>>')
+                    print(total_heuristic)
+                    print((0 - aux_heuristic_2) + (0 - aux_heuristic_1))
+
+                    if total_heuristic > aux_heuristic_2 + aux_heuristic_1 + suport_heuristic:
+                        total_heuristic = aux_heuristic_2 + aux_heuristic_1 + suport_heuristic
                         profesor_1 = profesor
                         profesor_2 = new_profesor
                         turno_1 = new_shift
@@ -70,9 +95,14 @@ class HybridMetaHeuristicGRASP(Algorithm):
                     for constraint in constraint_weak:
                         aux_heuristic_1 += constraint.evaluate_heuristic(
                             shifts[reference_shift.index(selected_shift)], personal[profesors.index(profesor)])
-                    if total_heuristic > aux_heuristic_1:
+                    print('<<<<<heuristica>>>>>')
+                    print(total_heuristic)
+                    print(aux_heuristic_1)
+                    heuristic_force = len(constraint_weak)+1
+                    if total_heuristic > aux_heuristic_1 + heuristic_force + suport_heuristic:
+                        total_heuristic = aux_heuristic_1 + heuristic_force + suport_heuristic
                         profesor_1 = profesor
-                        turno_2 = selected_shift
+                        turno_1 = selected_shift
                         heuristic_1 = aux_heuristic_1
 
             if profesor_1 and turno_1:
@@ -88,13 +118,16 @@ class HybridMetaHeuristicGRASP(Algorithm):
                     profesors_outside.remove(profesor_2)
                     if turno_2 in empty_shift:
                         empty_shift.remove(turno_2)
-
+            print(shift_assignment)
+        print('<<<<<<<<asignacion>>>>>>>>>>>')
         for profe, shift in shift_assignment.items():
             if shift != -1:
-                shifts[reference_shift.index(shift)].personal.append(personal[profesors.index(profe)])
+                turno = shifts[reference_shift.index(shift)]
+                profesorpap = personal[profesors.index(profe)]
+                turno.personal.append(profesorpap)
+#                shifts[reference_shift.index(shift)].personal.append(personal[profesors.index(profe)])
         return shifts
 
-# TODO revisar esto
 # TODO hacer lo la permuta al mejor vecino
 
     def domain(self, personal, shifts, constraint_strong):

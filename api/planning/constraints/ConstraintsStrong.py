@@ -31,7 +31,7 @@ class WomanProfesorShift(Constraint):
         if personal.sex == 'M' or personal.role == 'S':
             return True
         else:
-            if shift.number == 1:
+            if shift.number in [1, 2, 3]:
                 return True
             else:
                 return False
@@ -64,3 +64,8 @@ class SpecificDays(Constraint):
             return False
         else:
             return True
+
+
+class Prueba(Constraint):
+    def validate(self, shift, person):
+        return True
