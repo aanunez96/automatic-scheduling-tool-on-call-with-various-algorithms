@@ -19,6 +19,8 @@ import Header from './components/themes/Header';
 
 import UserList from './components/User/List';
 
+import Prueba from './components/Prueba/Plan';
+
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -203,7 +205,7 @@ function Paperbase(props) {
               <main className={classes.main}>
                 <Switch>
                   <Route exact path="/">
-                    <UserList />
+                    <Prueba />
                   </Route>
                 </Switch>
               </main>
