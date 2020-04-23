@@ -4,7 +4,6 @@ from graphene import ObjectType, relay
 from repoPlan.models import Shift
 from planning.models import Iteration
 import graphene
-from graphql_relay import from_global_id
 import django_filters
 
 
@@ -13,19 +12,24 @@ class ShiftFilter(django_filters.FilterSet):
 
     class Meta:
         model = Shift
-        fields = ['date', 'number', 'person', 'iteration']
+        fields = {
+            'date': ['lte', 'gte'],
+            'number': ['exact'],
+            'person': ['exact'],
+            'iteration': ['exact'],
+        }
 
 
 class ShiftNode(DjangoObjectType):
     class Meta:
         model = Shift
         use_connection = True
-        filter_fields = {
-            'date': ['exact'],
-            'number': ['exact'],
-            'person': ['exact'],
-            'iteration': ['exact'],
-        }
+        # filter_fields = {
+        #     'date': ['exact'],
+        #     'number': ['exact'],
+        #     'person': ['exact'],
+        #     'iteration': ['exact'],
+        # }
 
 
 class ShiftQuery(ObjectType):

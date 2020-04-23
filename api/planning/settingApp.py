@@ -3,15 +3,15 @@ from student_algorithm.static_algorithm import StaticAlgorithm
 from planning.constraints.ConstraintsWeak import Weekend, ShiftsRotations
 from planning.constraints.ConstraintsStrong import *
 from metaheuristic_algorithm.hybrid_metaheuristic import HybridMetaHeuristicGRASP
-from metaheuristic_algorithm.hybrid_metaheuristic_2 import Grasp
 
 
 ALGORITHM_PROFESOR = {
-    'metaHeuristic': HybridMetaHeuristicGRASP()
+    'static': SpecificAlgorithm(),
+    'grasp': HybridMetaHeuristicGRASP(),
 }
 
 ALGORITHM_STUDENT = {
-    'Static': StaticAlgorithm()
+    'static': StaticAlgorithm()
 }
 
 SHIFT_FOR_PROFESOR = {
@@ -46,11 +46,11 @@ CONSTRAINT_PROFESOR_WEAK = {
 }
 
 SHIFT_SCHEDULE = {
-    1: 20,
-    2: 21,
-    3: 22,
-    4: 23,
-    5: 24,
+    1: 11,
+    2: 12,
+    3: 13,
+    4: 14,
+    5: 15,
     6: 8,
     7: 9,
     8: 10,

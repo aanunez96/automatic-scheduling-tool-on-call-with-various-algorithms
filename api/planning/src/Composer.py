@@ -8,7 +8,8 @@ from repoPlan.models import Shift
 from planning.constraints.ConstraintsStrong import OnlyOnceAMonth
 import copy
 from django.db import transaction, IntegrityError
-
+import datetime
+from planning.settingApp import SHIFT_SCHEDULE
 
 class Composer:
 
@@ -17,7 +18,7 @@ class Composer:
         self.plans_profesor = []
         self.message = message
 
-    def compose(self, algorithm_profesor, algorithm_student):
+    def compose(self, algorithm_profesor, algorithm_student, guard, date_star):
         returned = []
         compare = CompareSolutions()
 
@@ -30,7 +31,7 @@ class Composer:
         best_solution_profesor = compare.compare(self.plans_profesor, 'P')
         self.message.percent = 70
         self.message.save()
-        returned.append(self.safe(best_solution_profesor, 'P'))
+        returned.append(self.save(best_solution_profesor, 'P'))
 
         input_student = Input('S')
         self.message.percent = 80
@@ -39,7 +40,7 @@ class Composer:
         best_solution_student = compare.compare(self.plans_student, 'S')
         self.message.percent = 90
         self.message.save()
-        returned.append(self.safe(best_solution_student, 'S'))
+        returned.append(self.save(best_solution_student, 'S'))
 
         return returned
 
@@ -57,7 +58,7 @@ class Composer:
             plan = Plan(algorithms_setting[algorithm].generate(input.personal, shifts, input.constraints_strong, input.constraints_weak), algorithm)
             self.plans_profesor.append(plan) if type_guard == 'P' else self.plans_student.append(plan)
 
-    def safe(self, plan, type_guard):
+    def save(self, plan, type_guard):
         try:
             with transaction.atomic():
                 number = Iteration.manager.last_iteration_number(type_guard)+1

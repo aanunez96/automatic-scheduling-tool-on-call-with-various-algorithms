@@ -47,7 +47,7 @@ class MessageQueue(models.Model):
         ('processed', 'Processed'),
         ('error', 'Error'),
     )
-    state = models.CharField(max_length=10, choices=STATES, blank=False, null=False, default='P')
+    state = models.CharField(max_length=10, choices=STATES, blank=False, null=False, default='pending')
     percent = models.SmallIntegerField()
     object = models.Manager()
 
@@ -96,11 +96,13 @@ class Iteration(models.Model):
 
 
 class Parameters(models.Model):
-    algorithm = models.CharField(max_length=255, blank=False, null=False)
-    ROLES = (
-        ('S', 'Student'),
-        ('P', 'Profesor'),
+    KEYS = (
+        ('alg_student', 'Algorithm Student'),
+        ('alg_profesor', 'Algorithm Profesor'),
+        ('guard', 'Type Guard'),
+        ('date_start', 'Date Start'),
     )
-    type_guard = models.CharField(max_length=1, choices=ROLES, blank=False, null=False, default='P')
+    key = models.CharField(max_length=255, choices=KEYS, blank=False, null=False)
+    value = models.CharField(max_length=255, blank=False, null=False)
     message = models.ForeignKey(MessageQueue, on_delete=models.CASCADE)
     object = models.Manager()
