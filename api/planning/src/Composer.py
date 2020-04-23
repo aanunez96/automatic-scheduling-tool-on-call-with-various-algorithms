@@ -18,7 +18,7 @@ class Composer:
         self.plans_profesor = []
         self.message = message
 
-    def compose(self, algorithm_profesor, algorithm_student, guard, date_star):
+    def compose(self, algorithm_profesor, algorithm_student, guard, date_profesor,date_student):
         returned = []
         compare = CompareSolutions()
 
@@ -55,7 +55,7 @@ class Composer:
         algorithms_setting = settingApp.ALGORITHM_PROFESOR if type_guard == 'P' else settingApp.ALGORITHM_STUDENT
         for algorithm in algorithms:
             shifts = copy.deepcopy(input.shifts)
-            plan = Plan(algorithms_setting[algorithm].generate(input.personal, shifts, input.constraints_strong, input.constraints_weak), algorithm)
+            plan = Plan(algorithms_setting[algorithm.value].generate(input.personal, shifts, input.constraints_strong, input.constraints_weak), algorithm.value)
             self.plans_profesor.append(plan) if type_guard == 'P' else self.plans_student.append(plan)
 
     def save(self, plan, type_guard):
@@ -74,7 +74,7 @@ class Composer:
                 iteration.save()
 
                 for shift in plan.shifts:
-                    created_shift = Shift(date=shift.date, number=shift.number, iteration=iteration)
+                    created_shift = Shift(date=datetime.datetime.combine(shift.date,datetime.time(SHIFT_SCHEDULE[shift.number])), number=shift.number, iteration=iteration)
                     created_shift.save()
                     for personal in shift.personal:
                         person = personal.person

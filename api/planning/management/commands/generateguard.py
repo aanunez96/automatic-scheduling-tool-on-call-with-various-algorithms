@@ -7,19 +7,22 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         message_queue = MessageQueue.object.filter(state='pending')
-        for massage in message_queue:
-            if massage:
-                massage.state = 'processing'
-                composer = Composer(massage)
-                #algorithm_student = Parameters.object.filter(type_guard='S').filter(message=message_queue) if Parameters.object.filter(type_guard='S').filter(message=message_queue) else False
-                #algorithm_profesor = Parameters.object.filter(type_guard='S').filter(message=message_queue) if Parameters.object.filter(type_guard='P').filter(message=message_queue) else False
-                guard = composer.compose(False, False)
+        for message in message_queue:
+            if message:
+                message.state = 'processing'
+                composer = Composer(message)
+                algorithm_student = Parameters.object.filter(key='alg_student').filter(message=message.id)
+                algorithm_profesor = Parameters.object.filter(key='alg_profesor').filter(message=message.id)
+                type_guard = Parameters.object.filter(key='guard').filter(message=message.id)
+                date_student = Parameters.object.filter(key='date_student').filter(message=message.id)
+                date_profesor = Parameters.object.filter(key='date_profesor').filter(message=message.id)
+                guard = composer.compose(algorithm_profesor, algorithm_student, type_guard, date_profesor, date_student)
 
                 if guard[0] != -1 and guard[1] != -1:
-                    massage.percent = 100
-                    massage.state = 'processed'
-                    massage.save()
+                    message.percent = 100
+                    message.state = 'processed'
+                    message.save()
                 else:
-                    massage.state = 'error'
-                    massage.save()
+                    message.state = 'error'
+                    message.save()
 

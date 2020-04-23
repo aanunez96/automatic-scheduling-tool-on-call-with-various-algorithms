@@ -6,12 +6,12 @@ from metaheuristic_algorithm.hybrid_metaheuristic import HybridMetaHeuristicGRAS
 
 
 ALGORITHM_PROFESOR = {
-    'static': SpecificAlgorithm(),
+    'staticProfesor': SpecificAlgorithm(),
     'grasp': HybridMetaHeuristicGRASP(),
 }
 
 ALGORITHM_STUDENT = {
-    'static': StaticAlgorithm()
+    'staticStudent': StaticAlgorithm()
 }
 
 SHIFT_FOR_PROFESOR = {

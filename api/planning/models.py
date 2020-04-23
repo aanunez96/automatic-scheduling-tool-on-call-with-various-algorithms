@@ -41,6 +41,7 @@ class Personal(models.Model):
 
 
 class MessageQueue(models.Model):
+    id = models.AutoField(primary_key=True)
     STATES = (
         ('pending', 'Pending'),
         ('processing', 'Processing'),

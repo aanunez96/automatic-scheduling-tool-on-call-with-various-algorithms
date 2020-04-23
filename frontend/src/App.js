@@ -249,7 +249,7 @@ function Paperbase(props) {
       if(dateStudent)dateStart[0]=dateStudent;
       for (let key in checkboxState){
           if (checkboxState[key]){
-              (key === 'checkedD' ||key === 'checkedF')?guard.push(key) : (key === 'checkedC')? algorithmStudent.push(key) : algorithmProfesor.push(key);
+              (key === 'P' ||key === 'S')?guard.push(key) : (key === 'staticStudent')? algorithmStudent.push(key) : algorithmProfesor.push(key);
           }
       }
       addMessage({variables: { algorithmStudent,algorithmProfesor,guard,dateStart}});
@@ -257,23 +257,23 @@ function Paperbase(props) {
   const { classes } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [checkboxState, setCheckboxState] = React.useState({
-    checkedA: true,
-    checkedB: true,
-    checkedC: true,
-    checkedD: true,
-    checkedF: true,
+    grasp: true,
+    staticProfesor: true,
+    staticStudent: true,
+    P: true,
+    S: true,
   });
   const [dateStudent,setDateStudent] = React.useState()
   const [dateProfesor,setDateProfesor] = React.useState()
   const handleChangeCheckbox = (event) => {
     setCheckboxState({...checkboxState, [event.target.name]: event.target.checked });
-    if(event.target.name === 'checkedD'){
-        (event.target.checked === false)? setCheckboxState(checkboxState =>({ ...checkboxState, checkedA: false ,checkedB: false })):
-        setCheckboxState(checkboxState =>({ ...checkboxState, checkedA: true ,checkedB: true }));
+    if(event.target.name === 'P'){
+        (event.target.checked === false)? setCheckboxState(checkboxState =>({ ...checkboxState, grasp: false ,staticProfesor: false })):
+        setCheckboxState(checkboxState =>({ ...checkboxState, grasp: true ,staticProfesor: true }));
     }
-    if(event.target.name === 'checkedF'){
-        (event.target.checked === false)? setCheckboxState(checkboxState =>({ ...checkboxState, checkedC: false})):
-        setCheckboxState(checkboxState =>({ ...checkboxState, checkedC: true}));
+    if(event.target.name === 'S'){
+        (event.target.checked === false)? setCheckboxState(checkboxState =>({ ...checkboxState, staticStudent: false})):
+        setCheckboxState(checkboxState =>({ ...checkboxState, staticStudent: true}));
     }
   };
 
@@ -326,18 +326,18 @@ function Paperbase(props) {
                                 </div>
                                 <div>
                                     <Checkbox
-                                    checked={checkboxState.checkedD}
+                                    checked={checkboxState.P}
                                     onChange={handleChangeCheckbox}
-                                    name="checkedD"
+                                    name="P"
                                     color="primary"
                                   />
                                         Profesores
                                 </div>
                                 <div>
                                     <Checkbox
-                                    checked={checkboxState.checkedF}
+                                    checked={checkboxState.S}
                                     onChange={handleChangeCheckbox}
-                                    name="checkedF"
+                                    name="S"
                                   />
                                         Estudiantes
                                 </div>
@@ -348,30 +348,30 @@ function Paperbase(props) {
                                 </div>
                                 <div >
                                     <Checkbox
-                                    checked={checkboxState.checkedA}
+                                    checked={checkboxState.grasp}
                                     onChange={handleChangeCheckbox}
-                                    name="checkedA"
+                                    name="grasp"
                                     color="primary"
-                                    disabled={checkboxState.checkedD? false: true }
+                                    disabled={checkboxState.P? false: true }
                                   />
                                      Metaheuristico Grasp
                                 </div>
                                 <div>
                                     <Checkbox
-                                    checked={checkboxState.checkedB}
+                                    checked={checkboxState.staticProfesor}
                                     onChange={handleChangeCheckbox}
-                                    name="checkedB"
+                                    name="staticProfesor"
                                     color="primary"
-                                    disabled={checkboxState.checkedD? false: true }
+                                    disabled={checkboxState.P? false: true }
                                   />
                                         Estatico Profesores
                                 </div>
                                 <div>
                                     <Checkbox
-                                    checked={checkboxState.checkedC}
+                                    checked={checkboxState.staticStudent}
                                     onChange={handleChangeCheckbox}
-                                    name="checkedC"
-                                    disabled={checkboxState.checkedF? false: true }
+                                    name="staticStudent"
+                                    disabled={checkboxState.S? false: true }
                                   />
                                         Estatico Estudiantes
                                 </div>
@@ -386,7 +386,7 @@ function Paperbase(props) {
                                 type="date"
                                 value={dateProfesor}
                                 onChange={setDateProfesor}
-                                disabled={checkboxState.checkedD? false: true }
+                                disabled={checkboxState.P? false: true }
                                 className={classes.textField}
                                 InputLabelProps={{
                                   shrink: true,
@@ -397,7 +397,7 @@ function Paperbase(props) {
                                 label="Estudiantes"
                                 type="date"
                                 value={dateStudent}
-                                disabled={checkboxState.checkedF? false: true }
+                                disabled={checkboxState.S? false: true }
                                 onChange={setDateStudent}
                                 className={classes.textField}
                                 InputLabelProps={{
