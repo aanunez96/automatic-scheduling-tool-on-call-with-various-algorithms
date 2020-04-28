@@ -13,5 +13,6 @@ class StudentType(DjangoObjectType):
             "uci_id": ["exact", "icontains", "istartswith"],
         }
 
+
 class StudentQuery(ObjectType):
     students = DjangoFilterConnectionField(StudentType)

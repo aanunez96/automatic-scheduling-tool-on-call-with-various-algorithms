@@ -2,7 +2,18 @@ from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene import ObjectType, relay
 from planning.models import Personal, Iteration, MessageQueue, Parameters
+from personal.models import Person
 import graphene
+import django_filters
+
+
+class MessageFilter(django_filters.FilterSet):
+    class Meta:
+        model = MessageQueue
+        fields = {
+            'state': ['iexact', 'exact'],
+            'percent': ['exact'],
+        }
 
 
 class PersonalNode(DjangoObjectType):
@@ -10,6 +21,7 @@ class PersonalNode(DjangoObjectType):
         model = Personal
         use_connection = True
         filter_fields = {
+            'id': ['exact'],
             'sex': ['iexact'],
             'children': ['exact'],
             'role': ['iexact'],
@@ -38,10 +50,10 @@ class MessageNode(DjangoObjectType):
     class Meta:
         model = MessageQueue
         use_connection = True
-        filter_fields = {
-            'state': ['iexact', 'exact'],
-            'percent': ['exact']
-        }
+        # filter_fields = {
+        #     'state': ['iexact', 'exact'],
+        #     'percent': ['exact']
+        # }
 
 
 class ParametersNode(DjangoObjectType):
@@ -60,7 +72,7 @@ class PersonalQuery(ObjectType):
 
 
 class MessageQuery(ObjectType):
-    message = DjangoFilterConnectionField(MessageNode)
+    message = DjangoFilterConnectionField(MessageNode, filterset_class=MessageFilter)
 
 
 class IterationQuery(ObjectType):
@@ -69,29 +81,79 @@ class IterationQuery(ObjectType):
 
 class UpdatePersonal(relay.ClientIDMutation):
     class Input:
-        available = graphene.Boolean(required=True)
+        available = graphene.Boolean()
         id = graphene.ID(required=True)
+        days = graphene.String()
 
     personal = graphene.Field(PersonalNode)
 
     @classmethod
-    def mutate_and_get_payload(cls, root, info, available, id):
+    def mutate_and_get_payload(cls, root, info, available, id, days):
         personal = Personal.object.get(pk=id)
         personal.available = available
+        personal.days = days
+        personal.save()
+        return UpdatePersonal(personal=personal)
+
+
+class CreatePersonal(relay.ClientIDMutation):
+    class Input:
+        available = graphene.Boolean()
+        id = graphene.String(required=True)
+        days = graphene.List(of_type=graphene.String)
+        sex = graphene.String(required=True)
+        role = graphene.String(required=True)
+        name = graphene.String(required=True)
+        children = graphene.Boolean()
+
+    personal = graphene.Field(PersonalNode)
+
+    @classmethod
+    def mutate_and_get_payload(cls, root, info, available, id, days, sex, role, name, children):
+        sexo = "F" if sex == "Female" else "M"
+        rol = "P" if role == "Profesor" else "S"
+        person = Person(id=id, uci=id)
+        person.save()
+        personal = Personal(id=id, name=name, sex=sexo, person=person, role=rol)
+        if available:
+            personal.available = available
+        if children:
+            personal.children = children
+        if len(days) > 0:
+            result = ""
+            for index,day in enumerate(days):
+                if day == 'Lunes':
+                    result+="1"
+                elif day == 'Martes':
+                    result+="2"
+                elif day == 'Miercoles':
+                    result+="3"
+                elif day == 'Jueves':
+                    result+="4"
+                elif day == 'Viernes':
+                    result+="5"
+                elif day == 'Sabado':
+                    result+="6"
+                elif day == 'Domingo':
+                    result+="7"
+                if index != len(days) - 1 and len(day) > 1:
+                    result += ","
+            personal.days = result
         personal.save()
         return UpdatePersonal(personal=personal)
 
 
 class PersonalMutation:
     update_personal = UpdatePersonal().Field()
+    create_personal = CreatePersonal().Field()
 
 
 class CreateMessage(relay.ClientIDMutation):
     class Input:
         algorithm_student = graphene.List(required=False, of_type=graphene.String)
         algorithm_profesor = graphene.List(required=False, of_type=graphene.String)
-        type_guard = graphene.List(required=False,of_type=graphene.String)
-        date_start = graphene.List(required=True,of_type=graphene.Date)
+        type_guard = graphene.List(required=False, of_type=graphene.String)
+        date_start = graphene.List(required=True, of_type=graphene.Date)
 
     message = graphene.Field(MessageNode)
 

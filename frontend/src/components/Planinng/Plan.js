@@ -23,7 +23,7 @@ import {createSvgIcon} from "@material-ui/core/utils";
 
 
 const SHIFTS_LIST = gql`
-query Student(
+query Shift(
   $date_Gte: DateTime!
   $date_Lte: DateTime!
 ) {
@@ -71,7 +71,6 @@ function Content(props){
             date_Lte: lte,
         },
     });
-
 
     if (!loading && data?.shift){
         let instance = new Array()

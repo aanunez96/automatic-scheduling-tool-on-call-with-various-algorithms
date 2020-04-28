@@ -9,7 +9,6 @@ class Command(BaseCommand):
         message_queue = MessageQueue.object.filter(state='pending')
         for message in message_queue:
             if message:
-                message.state = 'processing'
                 composer = Composer(message)
                 algorithm_student = Parameters.object.filter(key='alg_student').filter(message=message.id)
                 algorithm_profesor = Parameters.object.filter(key='alg_profesor').filter(message=message.id)
