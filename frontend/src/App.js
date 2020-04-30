@@ -20,9 +20,11 @@ import Header from './components/themes/Header';
 import UserList from './components/User/List';
 import Plan from './components/Planinng/Plan';
 import Generate from './components/Planinng/Generate';
-import ListPersonalDirectory from './components/Prueba/ListPersonalDirectory';
-import Add from './components/Prueba/Add';
-import PersonalSistem from "./components/Prueba/ListPersonalSistem";
+import ListPersonalDirectory from './components/Personal/ListDirectory';
+import Add from './components/Personal/Modify';
+import PersonalSistem from "./components/Personal/ListSistem";
+//import ListShift from "./components/Planinng/ListShift";
+import Single from "./components/Personal/SinglePersonal";
 
 
 function Copyright() {
@@ -215,11 +217,14 @@ function Paperbase(props) {
                   <Route exact path="/directory">
                     <ListPersonalDirectory/>
                   </Route>
-                  <Route exact path='/add/:idPersonal'>
+                  <Route exact path='/modify/:action/:idPersonal'>
                     <Add />
                   </Route>
                   <Route exact path='/personalSistem'>
                     <PersonalSistem />
+                  </Route>
+                  <Route exact path='/single/:idPersonal'>
+                    <Single />
                   </Route>
                 </Switch>
               </main>

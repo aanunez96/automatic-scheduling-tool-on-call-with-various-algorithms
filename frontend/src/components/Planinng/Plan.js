@@ -58,7 +58,7 @@ const timeTableCell = props => (
 function Content(props){
     const { classes } = props;
     const [currentViewName, setCurrentViewName] = React.useState("Day");
-    const [currentDate, setCurrentDate] = React.useState(new Date(2020, 3, 23));
+    const [currentDate, setCurrentDate] = React.useState();
     let appointments;
     let resources;
     const ofTime = (currentViewName === "Day")? 'day' : 'week';

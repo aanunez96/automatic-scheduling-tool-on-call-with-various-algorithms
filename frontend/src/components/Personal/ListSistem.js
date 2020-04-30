@@ -9,14 +9,11 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import { withStyles } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import TableCell from "@material-ui/core/TableCell";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
 import { gql } from 'apollo-boost';
 import {useQuery} from "@apollo/react-hooks";
+import { Link as RouterLink } from 'react-router-dom';
+import TablePersonal from "./TablePersonal";
+import Single from "./SinglePersonal";
 
 const styles = theme => ({
     paper: {
@@ -60,16 +57,30 @@ const USER_LIST = gql`
       }
     }
 `;
+const week =[
+    'Lunes',
+    'Martes',
+    'Miercoles',
+    'Jueves',
+    'Viernes',
+    'Sabado',
+    'Domingo',
+];
+
+const wordDay = (item) =>{
+   let index = [].filter.call(item,e => e != ",");
+   return index.map(e => week[parseInt(e,10)+1])
+};
 
 function Content(props) {
     const { classes } = props;
-
     const [uciId, setUciId] = useState("");
     const [textToFind, textToFindChange] = useState("");
 
     const { loading, data } = useQuery(USER_LIST, {
         variables: { uciId },
     });
+
 
     return (
         <Paper className={classes.paper}>
@@ -112,32 +123,12 @@ function Content(props) {
                             Loading...
                         </Typography>
                     :
-                        (data?.personal?.edges)?
-                            <TableContainer component={Paper}>
-                                <Table className={classes.table} aria-label="customized table">
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell align="center">Nombre</TableCell>
-                                            <TableCell align="center">Disponible</TableCell>
-                                            <TableCell align="center">Rol</TableCell>
-                                            <TableCell align="center">Hijos</TableCell>
-                                            <TableCell align="center">Sexo</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {data.personal.edges.map(row => (
-                                            <TableRow key={row.node.id}>
-                                                <TableCell align="center">{row.node.name}</TableCell>
-                                                <TableCell align="center">{row.node.available ? "Activo" : "Inactivo"}</TableCell>
-                                                <TableCell align="center">{row.node.role === 'S'?"Profesor" : "Estudiante" }</TableCell>
-                                                <TableCell align="center">{row.node.children ? "SI" : "No"}</TableCell>
-                                                <TableCell align="center">{row.node.sex === 'F'?"Mujer" : "Hombre" }</TableCell>
 
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
+                        (data?.personal?.edges)?
+                            (uciId!== "")?
+                                <Single personal={uciId}/>
+                                :
+                                <TablePersonal data={data}/>
                             :
                             <Typography color="textSecondary" align="center">
                                 No users for this project yet
