@@ -23,7 +23,7 @@ import Generate from './components/Planinng/Generate';
 import ListPersonalDirectory from './components/Personal/ListDirectory';
 import Add from './components/Personal/Modify';
 import PersonalSistem from "./components/Personal/ListSistem";
-//import ListShift from "./components/Planinng/ListShift";
+import ListShift from "./components/Planinng/ListShift";
 import Single from "./components/Personal/SinglePersonal";
 
 
@@ -209,7 +209,6 @@ function Paperbase(props) {
             <div className={classes.app}>
               <Header onDrawerToggle={handleDrawerToggle} />
               <main className={classes.main}>
-                <Generate/>
                 <Switch>
                   <Route exact path="/">
                     <Plan />
@@ -225,6 +224,9 @@ function Paperbase(props) {
                   </Route>
                   <Route exact path='/single/:idPersonal'>
                     <Single />
+                  </Route>
+                  <Route exact path='/listShift'>
+                    <ListShift />
                   </Route>
                 </Switch>
               </main>

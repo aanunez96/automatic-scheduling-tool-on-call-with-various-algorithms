@@ -75,29 +75,6 @@ function Content(props) {
       // setBuffer( diff2);
   }
 
-  // const progress = React.useRef(() => {});
-  // React.useEffect(() => {
-  //   progress.current = function(){
-  //       const { loading, data } = useQuery(PERCENT);
-  //       const diff2 = Math.random() * 10;
-  //       if(data?.message?.edge.length != 0){
-  //           let total = data.message.edge.reduce((t,row)=> t + row.node.percent);
-  //           setCompleted(total/data.message.edge.length);
-  //           setBuffer(completed + diff2);
-  //           }
-  //   };
-  // });
-  //
-  // React.useEffect(() => {
-  //   function tick() {
-  //     progress.current();
-  //   }
-  //   const timer = setInterval(tick, 500);
-  //
-  //   return () => {
-  //     clearInterval(timer);
-  //   };
-  // }, []);
   const generatePlanning = ()=>{
       const algorithmStudent = [];
       const algorithmProfesor = [];

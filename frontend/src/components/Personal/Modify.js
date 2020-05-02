@@ -725,8 +725,6 @@ function Content(props){
     }else {
         if (data?.personal?.edges){
           personal = (data.personal.edges.find( row => row.node.id == idPersonal)).node;
-          console.log(personal);
-
         }
     }
 
@@ -814,10 +812,14 @@ function Content(props){
                             </TableRow>
                         </TableBody>
                     </Table>
-                    <Grid className={classes.button}>
+                    <Grid container className={classes.button}>
+                    <Grid item xs>
+                    </Grid>
+                    <Grid item>
                     <Button align="right" variant="contained" onClick={addPerson} component={RouterLink} to={(action === "add")?"/directory":"/personalSistem"} color="primary">
                         Agragar al Sistema
                     </Button>
+                    </Grid>
                     </Grid>
                 </TableContainer>
       }

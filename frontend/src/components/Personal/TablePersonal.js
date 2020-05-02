@@ -36,7 +36,7 @@ function Content(props) {
                             <TableCell align="center">{row.node.children ? "SI" : "No"}</TableCell>
                             <TableCell align="center">{row.node.sex === 'F'?"Mujer" : "Hombre" }</TableCell>
                             <TableCell align="center">
-                                <Button variant="contained" component={RouterLink} to={"/modify/update/".concat(row.node.id)} >
+                                <Button variant="contained" component={RouterLink} to={`/modify/update/${row.node.id}`} >
                                     Add
                                 </Button>
                             </TableCell>
