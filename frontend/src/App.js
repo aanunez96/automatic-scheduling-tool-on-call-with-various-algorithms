@@ -25,6 +25,7 @@ import Add from './components/Personal/Modify';
 import PersonalSistem from "./components/Personal/ListSistem";
 import ListShift from "./components/Planinng/ListShift";
 import Single from "./components/Personal/SinglePersonal";
+import IterationList from "./components/Planinng/IterationList";
 
 
 function Copyright() {
@@ -227,6 +228,9 @@ function Paperbase(props) {
                   </Route>
                   <Route exact path='/listShift'>
                     <ListShift />
+                  </Route>
+                  <Route exact path='/iterationlist'>
+                    <IterationList />
                   </Route>
                 </Switch>
               </main>

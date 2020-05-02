@@ -204,7 +204,7 @@ function Content(props) {
                                                 <TableCell align="center">
                                                     {row.node.person.edges.map(item => (
                                                         <div key={item.node.id}>
-                                                            <Link component={RouterLink} color="inherit" to ={`/modify/update/${item.node.id}`}>{item.node.personal.name}</Link>
+                                                            <Link component={RouterLink} color="inherit" to ={`/single/${item.node.id}`}>{item.node.personal.name}</Link>
                                                             <IconButton color ={(changePersonal.personal)?(item.node.id === changePersonal.personal)?"secondary":"primary" : "default"}  onClick={()=>commitChange(row.node.id,item.node.id)} >
                                                                 <Autorenew/>
                                                             </IconButton>

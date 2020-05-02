@@ -10,6 +10,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
+import Link from '@material-ui/core/Link';
 
 
 function Content(props) {
@@ -30,14 +31,16 @@ function Content(props) {
                 <TableBody>
                     {data.personal.edges.map(row => (
                         <TableRow key={row.node.id}>
-                            <TableCell align="center">{row.node.name}</TableCell>
+                            <TableCell align="center">
+                                <Link component={RouterLink} color="inherit" to ={`/single/${row.node.id}`}>{row.node.name}</Link>
+                            </TableCell>
                             <TableCell align="center">{row.node.available ? "Activo" : "Inactivo"}</TableCell>
                             <TableCell align="center">{row.node.role === 'S'?"Profesor" : "Estudiante" }</TableCell>
                             <TableCell align="center">{row.node.children ? "SI" : "No"}</TableCell>
                             <TableCell align="center">{row.node.sex === 'F'?"Mujer" : "Hombre" }</TableCell>
                             <TableCell align="center">
                                 <Button variant="contained" component={RouterLink} to={`/modify/update/${row.node.id}`} >
-                                    Add
+                                    Modificar
                                 </Button>
                             </TableCell>
                         </TableRow>

@@ -16,6 +16,27 @@ class MessageFilter(django_filters.FilterSet):
         }
 
 
+class IterationFilter(django_filters.FilterSet):
+    class Meta:
+        model = Iteration
+        fields = {
+            'algorithm': ['iexact'],
+            'heuristic': ['exact'],
+            'type_guard': ['exact'],
+            'number': ['exact'],
+            'executor': ['exact'],
+            'date_start': ['exact'],
+            'date_end': ['exact'],
+        }
+    order_by = django_filters.OrderingFilter(
+        fields=(
+            ('date_start', 'date_start'),
+            ('date_end', 'date_end'),
+        )
+    )
+
+
+
 class PersonalNode(DjangoObjectType):
     class Meta:
         model = Personal
@@ -35,25 +56,12 @@ class IterationNode(DjangoObjectType):
     class Meta:
         model = Iteration
         use_connection = True
-        filter_fields = {
-            'algorithm': ['iexact'],
-            'heuristic': ['exact'],
-            'type_guard': ['exact'],
-            'number': ['exact'],
-            'executor': ['exact'],
-            'date_start': ['exact'],
-            'date_end': ['exact'],
-        }
 
 
 class MessageNode(DjangoObjectType):
     class Meta:
         model = MessageQueue
         use_connection = True
-        # filter_fields = {
-        #     'state': ['iexact', 'exact'],
-        #     'percent': ['exact']
-        # }
 
 
 class ParametersNode(DjangoObjectType):
@@ -76,7 +84,7 @@ class MessageQuery(ObjectType):
 
 
 class IterationQuery(ObjectType):
-    iteration = DjangoFilterConnectionField(IterationNode)
+    iteration = DjangoFilterConnectionField(IterationNode,filterset_class=IterationFilter)
 
 
 class UpdatePersonal(relay.ClientIDMutation):
@@ -110,11 +118,17 @@ class CreatePersonal(relay.ClientIDMutation):
 
     @classmethod
     def mutate_and_get_payload(cls, root, info, available, id, days, sex, role, name, children):
+        try:
+            personal = Personal.object.get(id=id)
+        except Personal.DoesNotExist:
+            person = Person(id=id, uci=id)
+            person.save()
+            personal = Personal(id=id, person=person)
         sexo = "F" if sex == "Female" else "M"
         rol = "P" if role == "Profesor" else "S"
-        person = Person(id=id, uci=id)
-        person.save()
-        personal = Personal(id=id, name=name, sex=sexo, person=person, role=rol)
+        personal.name = name
+        personal.role = rol
+        personal.sex = sexo
         if available:
             personal.available = available
         if children:

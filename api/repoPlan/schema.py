@@ -38,20 +38,21 @@ class ShiftQuery(ObjectType):
 
 class UpdateShift(relay.ClientIDMutation):
     class Input:
-        person_remove = graphene.ID(required=True)
-        person_add = graphene.ID(required=True)
-        id = graphene.ID(required=True)
+        person_1 = graphene.ID(required=True)
+        person_2 = graphene.ID(required=True)
+        shift_1 = graphene.ID(required=True)
+        shift_2 = graphene.ID(required=True)
 
     shift = graphene.Field(ShiftNode)
 
     @classmethod
-    def mutate_and_get_payload(cls, root, info, person_remove, person_add, id):
-        shift = Shift.object.get(pk=id)
-        shift2 = Shift.object.filter(iteration=shift.iteration).get(person__id=person_add)
-        shift.person.add(person_add)
-        shift.person.remove(person_remove)
-        shift2.person.remove(person_add)
-        shift2.person.add(person_remove)
+    def mutate_and_get_payload(cls, root, info, person_1, person_2, shift_1, shift_2):
+        shift = Shift.object.get(pk=shift_1)
+        shift2 = Shift.object.get(pk=shift_2)
+        shift.person.add(person_2)
+        shift.person.remove(person_1)
+        shift2.person.remove(person_2)
+        shift2.person.add(person_1)
         shift.save()
         shift2.save()
         return UpdateShift(shift=shift)
