@@ -66,9 +66,9 @@ function Content(props) {
   // const [completed, setCompleted] = React.useState(0);
   // const [buffer, setBuffer] = React.useState(10);
   const { loading, data } = useQuery(PERCENT,{pollInterval:2000});
-  if(data?.message?.edges.length > 0){
+  if(data?.message?.edges){
       let array = data.message.edges.map(row => row.node.percent);
-      let total = (array.reduce((accumulator, currentValue) => accumulator + currentValue))/data.message.edges.length;
+      let total = (array.reduce((accumulator, currentValue) => accumulator + currentValue,0))/data.message.edges.length;
       // let total = data.message.edges.reduce((accumulator, currentValue) => accumulator + currentValue.node.percent);
       completed = total;
       buffer = Math.random() * 10 + completed;

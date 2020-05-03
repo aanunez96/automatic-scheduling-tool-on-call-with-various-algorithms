@@ -212,6 +212,7 @@ function Paperbase(props) {
               <main className={classes.main}>
                 <Switch>
                   <Route exact path="/">
+                    <Generate/>
                     <Plan />
                   </Route>
                   <Route exact path="/directory">
@@ -227,9 +228,11 @@ function Paperbase(props) {
                     <Single />
                   </Route>
                   <Route exact path='/listShift'>
+                    <Generate/>
                     <ListShift />
                   </Route>
                   <Route exact path='/iterationlist'>
+                    <Generate/>
                     <IterationList />
                   </Route>
                 </Switch>

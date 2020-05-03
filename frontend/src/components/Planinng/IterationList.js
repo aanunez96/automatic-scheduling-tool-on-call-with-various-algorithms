@@ -15,13 +15,13 @@ import TableCell from "@material-ui/core/TableCell";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import { gql } from 'apollo-boost';
-import {useQuery} from "@apollo/react-hooks";
+import {useQuery, useMutation} from "@apollo/react-hooks";
 import IconButton from '@material-ui/core/IconButton';
-import {NavigateBefore, NavigateNext} from '@material-ui/icons';
+import {NavigateBefore, NavigateNext,DeleteForever} from '@material-ui/icons';
+import Modal from '@material-ui/core/Modal';
 
 const styles = theme => ({
     paper: {
-        maxWidth: 936,
         margin: 'auto',
         overflow: 'hidden',
     },
@@ -34,6 +34,18 @@ const styles = theme => ({
     searchBar: {
         borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
     },
+    paperModal: {
+        position: 'absolute',
+        width: 300,
+        padding: theme.spacing(2, 4, 3),
+        top: `50%`,
+        left: `50%`,
+        transform: `translate(-50%, -50%)`,
+    },
+    modal : {
+
+    },
+
 });
 
 const ITERATION_LIST = gql`
@@ -67,9 +79,20 @@ query(
 }
 `;
 
+const DELETE_ITERATION = gql`
+mutation DeleteIteration(
+    $id: ID!
+){
+  deleteMutation(input:{idIteration: $id}){
+    iteration
+  }
+}
+
+`;
+
 function Content(props) {
     const {classes} = props;
-
+    const [daleteIteration, infoDelete] = useMutation(DELETE_ITERATION);
     const [paginator, setPaginator] = useState({
        before: "",
        after:"",
@@ -78,9 +101,14 @@ function Content(props) {
     const {loading, data} = useQuery(ITERATION_LIST, {
         variables: {before: paginator.before, after: paginator.after},
     });
-    if(data){
-        console.log(!data.iteration.pageInfo.hasPreviousPage);
-    }
+    const[openModal,setOpenModal] = useState(false);
+    const[openResult,setOpenResult] = useState(false);
+    const[idIteration,setIdIteration] = useState(false);
+    const deleteForever = () =>{
+        console.log(idIteration);
+        daleteIteration({variables: { id:idIteration}});
+        setOpenModal(false);
+    };
 
     return (
         <Paper className={classes.paper}>
@@ -101,6 +129,7 @@ function Content(props) {
                                             <TableCell align="center">Algoritmo</TableCell>
                                             <TableCell align="center">heuristica</TableCell>
                                             <TableCell align="center">Tipo de Guardia</TableCell>
+                                            <TableCell align="center"></TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
@@ -111,6 +140,11 @@ function Content(props) {
                                                 <TableCell align="center">{row.node.algorithm}</TableCell>
                                                 <TableCell align="center">{row.node.heuristic}</TableCell>
                                                 <TableCell align="center">{row.node.typeGuard == "P" ? "Profesores":"Estudiantes"}</TableCell>
+                                                <TableCell align="center">
+                                                    <IconButton onClick={() => {setOpenModal(true);setIdIteration(row.node.id);}}>
+                                                        <DeleteForever/>
+                                                    </IconButton>
+                                                </TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>
@@ -127,16 +161,60 @@ function Content(props) {
                 <Toolbar>
                     <Grid container spacing={2} alignItems="center">
                         <Grid item>
-                            <IconButton  disabled={false} onClick={() => {setPaginator({before: data.iteration.pageInfo.startCursor, after: ""})}} >
+                            <IconButton
+                                // disabled={data.iteration.pageInfo.hasPreviousPage}
+                                onClick={() => setPaginator({before: data.iteration.pageInfo.startCursor, after: ""})}
+                                >
                                 <NavigateBefore/>
                             </IconButton>
-                            <IconButton disabled={false} onClick={() => {setPaginator({before:"", after: data.iteration.pageInfo.endCursor})}}>
+                            <IconButton
+                                onClick={() => {setPaginator({before:"", after: data.iteration.pageInfo.endCursor})}}
+                                // disabled={data.iteration.pageInfo.hasNextPage}
+                            >
                                 <NavigateNext/>
                             </IconButton>
                         </Grid>
                     </Grid>
                 </Toolbar>
             </AppBar>
+            <Modal
+                open={openModal}
+                onClose={()=> setOpenModal(false)}
+                aria-labelledby="simple-modal-title"
+                aria-describedby="simple-modal-description"
+              >
+                    <Paper className={classes.paperModal}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                        <Typography>
+                            Estas seguro que deseas eliminar la Iteracion?
+                        </Typography>
+                        </Grid>
+                        <Grid item xs>
+                        </Grid>
+                        <Grid item>
+                            <Button onClick={deleteForever}>
+                                Aceptar
+                            </Button>
+                            <Button onClick={()=> {setOpenModal(false)}}>
+                                Cancelar
+                            </Button>
+                        </Grid>
+                        </Grid>
+                    </Paper>
+             </Modal>
+            <Modal
+                open={openResult}
+                onClose={()=> setOpenResult(false)}
+                aria-labelledby="simple-modal-title"
+                aria-describedby="simple-modal-description"
+              >
+                    <Paper className={classes.paperModal}>
+                        <Typography>
+                            {infoDelete.ititeration}
+                        </Typography>
+                    </Paper>
+             </Modal>
         </Paper>
     );
 }

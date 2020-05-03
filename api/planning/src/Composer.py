@@ -11,6 +11,7 @@ from django.db import transaction, IntegrityError
 import datetime
 from planning.settingApp import SHIFT_SCHEDULE
 
+
 class Composer:
 
     def __init__(self, message):

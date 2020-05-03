@@ -5,6 +5,7 @@ from planning.models import Personal, Iteration, MessageQueue, Parameters
 from personal.models import Person
 import graphene
 import django_filters
+from django.db import transaction, IntegrityError
 
 
 class MessageFilter(django_filters.FilterSet):
@@ -160,6 +161,27 @@ class CreatePersonal(relay.ClientIDMutation):
 class PersonalMutation:
     update_personal = UpdatePersonal().Field()
     create_personal = CreatePersonal().Field()
+
+
+class DeleteIteration(relay.ClientIDMutation):
+    class Input:
+        idIteration = graphene.ID(required=True)
+
+    iteration = graphene.Boolean()
+
+    @classmethod
+    def mutate_and_get_payload(cls, root, info, idIteration):
+        try:
+            with transaction.atomic():
+                iter = Iteration.object.get(pk=idIteration)
+                iter.delete()
+                return DeleteIteration(iteration=True)
+        except IntegrityError:
+            return DeleteIteration(iteration=False)
+
+
+class IterationMutation:
+    delete_mutation = DeleteIteration().Field()
 
 
 class CreateMessage(relay.ClientIDMutation):
