@@ -1,5 +1,5 @@
 import Typography from '@material-ui/core/Typography';
-import React from 'react';
+import React, {useState} from 'react';
 import Grid from '@material-ui/core/Grid';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
@@ -13,7 +13,8 @@ import Button from '@material-ui/core/Button';
 import { useMutation,useQuery } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
 import { withStyles } from '@material-ui/core/styles';
-
+import Modal from '@material-ui/core/Modal';
+import Paper from '@material-ui/core/Paper';
 
 const styles = theme => ({
   expasionPanel: {
@@ -25,6 +26,14 @@ const styles = theme => ({
   },
   details: {
     alignItems: 'center',
+  },
+  paperModal: {
+        position: 'absolute',
+        width: 300,
+        padding: theme.spacing(2, 4, 3),
+        top: `50%`,
+        left: `50%`,
+        transform: `translate(-50%, -50%)`,
   },
 });
 const ADD_MESSAGE = gql`
@@ -60,19 +69,21 @@ const PERCENT = gql`
 
 function Content(props) {
   const { classes } = props;
-  var completed = 0;
-  var buffer = 10;
-  const [addMessage,] = useMutation(ADD_MESSAGE);
-  // const [completed, setCompleted] = React.useState(0);
-  // const [buffer, setBuffer] = React.useState(10);
-  const { loading, data } = useQuery(PERCENT,{pollInterval:2000});
+  let completed = 0;
+  let buffer = 10;
+  const [addMessage,{data: message}] = useMutation(ADD_MESSAGE);
+  const { loading, data } = useQuery(PERCENT,{pollInterval:5000});
+  const [render , setRender] = useState(false);
+  const[openModal,setOpenModal] = useState(false);
+  if(message && !render){
+      setRender(true);
+      setOpenModal(true);
+  }
   if(data?.message?.edges){
       let array = data.message.edges.map(row => row.node.percent);
       let total = (array.reduce((accumulator, currentValue) => accumulator + currentValue,0))/data.message.edges.length;
-      // let total = data.message.edges.reduce((accumulator, currentValue) => accumulator + currentValue.node.percent);
       completed = total;
       buffer = Math.random() * 10 + completed;
-      // setBuffer( diff2);
   }
 
   const generatePlanning = ()=>{
@@ -227,6 +238,18 @@ return (
                       </Button>
                     </ExpansionPanelActions>
                   </ExpansionPanel>
+                    <Modal
+                        open={openModal}
+                        onClose={()=> setOpenModal(false)}
+                        aria-labelledby="simple-modal-title"
+                        aria-describedby="simple-modal-description"
+                      >
+                            <Paper className={classes.paperModal}>
+                                <Typography>
+                                    {`Se ha solicitado la generacion de la Guardia Correctamente`}
+                                </Typography>
+                            </Paper>
+                     </Modal>
                 </div>
 );
 }

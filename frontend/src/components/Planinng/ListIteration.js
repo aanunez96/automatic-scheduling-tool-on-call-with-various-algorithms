@@ -42,42 +42,7 @@ const styles = theme => ({
         left: `50%`,
         transform: `translate(-50%, -50%)`,
     },
-    modal : {
-
-    },
-
 });
-
-const ITERATION_LIST = gql`
-query(  
-  $before:String!,
-  $after:String!
-){
-  iteration(
-    first:1,
-    before:$before,
-    after:$after,
-    orderBy:"-date_end"
-  ){
-    pageInfo{
-      hasNextPage
-      hasPreviousPage
-      startCursor
-      endCursor
-    }
-    edges{
-      node{
-        id
-        algorithm
-        heuristic
-        typeGuard
-        dateStart
-        dateEnd 
-      }
-    }
-  }
-}
-`;
 
 const DELETE_ITERATION = gql`
 mutation DeleteIteration(
@@ -91,25 +56,61 @@ mutation DeleteIteration(
 `;
 
 function Content(props) {
-    const {classes} = props;
-    const [daleteIteration, infoDelete] = useMutation(DELETE_ITERATION);
-    const [paginator, setPaginator] = useState({
+        const [paginator, setPaginator] = useState({
        before: "",
        after:"",
     });
-
-    const {loading, data} = useQuery(ITERATION_LIST, {
-        variables: {before: paginator.before, after: paginator.after},
+    const ITERATION_LIST = gql`
+    query(  
+      $before:String!,
+      $after:String!
+    ){
+      iteration(
+        ${(paginator.before !== ""?"last": "first")}:1,
+        before:$before,
+        after:$after,
+        orderBy:"-date_end"
+      ){
+        pageInfo{
+          hasNextPage
+          hasPreviousPage
+          startCursor
+          endCursor
+        }
+        edges{
+          node{
+            id
+            algorithm
+            heuristic
+            typeGuard
+            dateStart
+            dateEnd 
+          }
+        }
+      }
+    }
+    `;
+    const {classes} = props;
+    const [daleteIteration, {data:infoDelete}] = useMutation(DELETE_ITERATION);
+    const [previusPage, setPreviusPage] = useState("");
+    const {loading, data, refetch} = useQuery(ITERATION_LIST, {
+        variables: {before: paginator.before, after: paginator.after},fetchPolicy: "network-only",
     });
     const[openModal,setOpenModal] = useState(false);
     const[openResult,setOpenResult] = useState(false);
+    const[renderOpen,setRenderOpen] = useState(false);
     const[idIteration,setIdIteration] = useState(false);
+    if(infoDelete?.deleteMutation?.iteration){
+        refetch();
+        if(!renderOpen){
+           setRenderOpen(true);
+           setOpenResult(true);
+        }
+    }
     const deleteForever = () =>{
-        console.log(idIteration);
         daleteIteration({variables: { id:idIteration}});
         setOpenModal(false);
     };
-
     return (
         <Paper className={classes.paper}>
         <div className={classes.contentWrapper}>
@@ -162,14 +163,14 @@ function Content(props) {
                     <Grid container spacing={2} alignItems="center">
                         <Grid item>
                             <IconButton
-                                // disabled={data.iteration.pageInfo.hasPreviousPage}
-                                onClick={() => setPaginator({before: data.iteration.pageInfo.startCursor, after: ""})}
+                                disabled={!(data?.iteration?.pageInfo?.hasPreviousPage || previusPage === 'next')}
+                                onClick={() => {setPaginator({before: data.iteration.pageInfo.startCursor, after: ""}); setPreviusPage('previous');}}
                                 >
                                 <NavigateBefore/>
                             </IconButton>
                             <IconButton
-                                onClick={() => {setPaginator({before:"", after: data.iteration.pageInfo.endCursor})}}
-                                // disabled={data.iteration.pageInfo.hasNextPage}
+                                onClick={() => {setPaginator({before:"", after: data.iteration.pageInfo.endCursor}); setPreviusPage('next');}}
+                                disabled={!(data?.iteration?.pageInfo?.hasNextPage || previusPage === 'previous')}
                             >
                                 <NavigateNext/>
                             </IconButton>
@@ -211,7 +212,7 @@ function Content(props) {
               >
                     <Paper className={classes.paperModal}>
                         <Typography>
-                            {infoDelete.ititeration}
+                            {(infoDelete?.deleteMutation?.iteration)? "Se ha eliminado la Itreracion Correctamente" : "Ha ocurrido un error inesperado "}
                         </Typography>
                     </Paper>
              </Modal>

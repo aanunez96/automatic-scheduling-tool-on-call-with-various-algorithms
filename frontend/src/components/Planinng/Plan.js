@@ -20,7 +20,8 @@ import { gql } from 'apollo-boost';
 import {useQuery} from "@apollo/react-hooks";
 import * as Moment from 'moment';
 import {createSvgIcon} from "@material-ui/core/utils";
-
+import { Link as RouterLink } from 'react-router-dom';
+import Link from '@material-ui/core/Link';
 
 const SHIFTS_LIST = gql`
 query Shift(
@@ -39,7 +40,10 @@ query Shift(
         person{
           edges{
             node{
+              personal{
+              name  
               id
+              }
             }
           }
         }
@@ -78,7 +82,7 @@ function Content(props){
            row.node.person.edges.forEach(item => {
                instance.push({
                     id: item.node.id,
-                    text: `Andrew Glover ${item.node.id}`,
+                    text: <Link component={RouterLink} color="inherit" to ={`/single/${item.node.personal.id}`}>{item.node.personal.name}</Link>,
                 })});
         });
 

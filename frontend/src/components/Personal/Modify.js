@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { useMutation,useQuery } from '@apollo/react-hooks';
-import { Link as RouterLink,useParams } from 'react-router-dom';
+import { Link as RouterLink,useParams,Redirect } from 'react-router-dom';
 import Paper from '@material-ui/core/Paper';
 import { withStyles,useTheme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -19,7 +19,13 @@ import Switch from '@material-ui/core/Switch';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import { gql } from 'apollo-boost';
-
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import CardContent from '@material-ui/core/CardContent';
+import Avatar from '@material-ui/core/Avatar';
+import { red,blue } from '@material-ui/core/colors';
+import * as Moment from 'moment';
+import Modal from '@material-ui/core/Modal';
 
 const MenuProps = {
   PaperProps: {
@@ -39,9 +45,26 @@ const styles = theme => ({
     minWidth: 120,
     maxWidth: 300,
   },
-    button: {
+  button: {
         padding: theme.spacing(2),
-    }
+    },
+  avatarP: {
+    backgroundColor: blue[500],
+  },
+  avatars: {
+    backgroundColor: red[500],
+  },
+   container: {
+        margin: theme.spacing(1),
+    },
+   paperModal: {
+        position: 'absolute',
+        width: 300,
+        padding: theme.spacing(2, 4, 3),
+        top: `50%`,
+        left: `50%`,
+        transform: `translate(-50%, -50%)`,
+    },
 });
 const shiftList = [
   {
@@ -685,6 +708,9 @@ mutation CratePersonal(
   }){
     personal{
       id
+      available
+      days
+      children
     }
   }
 }
@@ -704,19 +730,47 @@ const USER_LIST = gql`
             sex
             role
             children
+            days
+            person{
+              shiftSet{
+                edges{
+                  node{
+                    date
+                    number
+                    person{
+                      edges{
+                        node{
+                          personal{
+                            id
+                            name
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     }
 `;
 
+const wordDay = (item) =>{
+   let index = [].filter.call(item,e => e != ",");
+   return index.map(e => week[parseInt(e,10)-1]);
+};
 
 function Content(props){
     const { classes } = props;
     const { idPersonal, action } = useParams();
-    const [addPersonal,] = useMutation(ADD_PERSONAL);
-    var personal = false
+    const [addPersonal, {data:infoMutate}] = useMutation(ADD_PERSONAL);
+    const [weekDay, setWeekDay] = useState([]);
+    const [render , setRender] = useState({day: false, modal:false});
+    const[openModal,setOpenModal] = useState(false);
 
+    let personal = false;
     const { loading, data } = useQuery(USER_LIST, {
         variables: { uciId: idPersonal },
     });
@@ -725,17 +779,24 @@ function Content(props){
     }else {
         if (data?.personal?.edges){
           personal = (data.personal.edges.find( row => row.node.id == idPersonal)).node;
+          console.log(personal);
+          if(!render.day){
+              setRender({...render,day: true});
+              setWeekDay(wordDay(personal.days));
+          }
         }
     }
-
+    if (infoMutate?.createPersonal && !render.modal){
+        setRender({...render,modal: true});
+        setOpenModal(true);
+    }
     const theme = useTheme();
-    const [weekDay, setWeekDay] = useState([]);
     const [available, setAvailable] = useState(true);
     const [children, setChildren] = useState(false);
     const handleChange = (event) => {
         setWeekDay(event.target.value);
     };
-    const addPerson = ()=>{
+    const modifyPerson = ()=>{
         const id = personal.id
         const sex = personal.sex
         const role = personal.role
@@ -744,15 +805,17 @@ function Content(props){
         addPersonal({variables: { id, available, days, sex, role, name, children }});
     };
 
-
     return (
         <Paper className={classes.paper}>
-            <div className={classes.contentWrapper}>
-                {(action === "update" && loading) ?
+                {(render.modal && !openModal)?
+                    <Redirect to={(action === "add")?"/directory":"/personalSistem"}/>
+                    :
+                    (action === "update" && loading) ?
                         <Typography color="textSecondary" align="center">
                             Loading...
                         </Typography>
                     :
+                <div className={classes.contentWrapper}>
                 <TableContainer component={Paper}>
                     <Table className={classes.table} aria-label="customized table">
                         <TableHead>
@@ -807,8 +870,6 @@ function Content(props){
                                         </Select>
                                     </FormControl>
                                 </TableCell>
-
-
                             </TableRow>
                         </TableBody>
                     </Table>
@@ -816,14 +877,54 @@ function Content(props){
                     <Grid item xs>
                     </Grid>
                     <Grid item>
-                    <Button align="right" variant="contained" onClick={addPerson} component={RouterLink} to={(action === "add")?"/directory":"/personalSistem"} color="primary">
+                    <Button align="right" variant="contained" onClick={modifyPerson} color="primary">
                         Agragar al Sistema
                     </Button>
                     </Grid>
                     </Grid>
                 </TableContainer>
-      }
+    {(action !== "add")?
+            <Grid container spacing={3} alignItems="center" className={classes.container}>
+                {personal.person.shiftSet.edges.map(row => (
+                    <Grid item key={row.node.id} >
+                        <Card>
+                            <CardContent>
+                                <Typography  align="center">
+                                    {Moment(row.node.date).format('LLL')}
+                                </Typography>
+                                {row.node.person.edges.map(item =>(
+                                    <Grid container key={row.node.id}>
+                                        <Avatar  aria-label="recipe" className={(item.node.personal.role == "P")? classes.avatarP: classes.avatars}>
+                                            {(item.node.personal.role == "P")? "P": "S"}
+                                        </Avatar>
+                                        <Typography color={(item.node.personal.id==personal.id)?"textPrymary":"textSecondary"} align="inherit">
+                                                {item.node.personal.name}
+                                        </Typography>
+                                    </Grid>
+                                        ))}
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                            ))}
+            </Grid>
+            :
+            <div>
             </div>
+    }
+            </div>
+    }
+            <Modal
+                open={openModal}
+                onClose={()=> setOpenModal(false)}
+                aria-labelledby="simple-modal-title"
+                aria-describedby="simple-modal-description"
+              >
+                    <Paper className={classes.paperModal}>
+                        <Typography>
+                            {`Se ha ${(action === "add")? 'añadido': 'modificado'} la Persona Correctamente`}
+                        </Typography>
+                    </Paper>
+             </Modal>
         </Paper>
   );
 }

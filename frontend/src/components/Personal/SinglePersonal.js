@@ -49,6 +49,7 @@ const USER_LIST = gql`
             sex
             role
             children
+            days
             person{
               shiftSet{
                 edges{

@@ -4,7 +4,6 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import { Link as RouterLink } from 'react-router-dom';
 import Link from '@material-ui/core/Link';
-
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
@@ -659,18 +658,17 @@ personal{
 
 function Content(props) {
     const { classes } = props;
-    var list = [];
-    var personalSistem = [];
+    let list = [];
+    let personalSistem = [];
     const [name, setname] = useState("");
     const [textToFind, textToFindChange] = useState("");
-    // const [personalSistem,setPersonalSistem] = useState([]);
-    // const [list, setList] = useState([]);
-    const { loading, data } = useQuery(PERSONAL);
+    const { loading, data } = useQuery(PERSONAL,{fetchPolicy: "network-only"});
 
 
     if (data?.personal?.edges){
+      console.log(data.personal);
         personalSistem = data.personal.edges.map(row => row.node.id);
-        list = shiftList.filter(row => personalSistem.indexOf(row.id) == -1);
+        list = shiftList.filter(row => personalSistem.indexOf(row.id.toString()) === -1);
     }
     return (
         <Paper className={classes.paper}>
@@ -725,7 +723,7 @@ function Content(props) {
                                                 <TableCell align="center">{row.sex}</TableCell>
                                                 <TableCell align="center">{row.role}</TableCell>
                                                 <TableCell align="center">
-                                                    <Button variant="contained" component={RouterLink} to={"/modify/add/".concat(row.id)} >
+                                                    <Button variant="contained" component={RouterLink} to={`/modify/add/${row.id}`} >
                                                       Add
                                                     </Button>
                                                 </TableCell>

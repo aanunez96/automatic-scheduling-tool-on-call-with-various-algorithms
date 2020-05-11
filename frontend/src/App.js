@@ -11,12 +11,9 @@ import {
   Route,
 } from "react-router-dom";
 import { ApolloProvider } from '@apollo/react-hooks';
-
 import apolloClient from "./apolloClient";
-
 import Navigator from './components/themes/Navigator';
 import Header from './components/themes/Header';
-
 import UserList from './components/User/List';
 import Plan from './components/Planinng/Plan';
 import Generate from './components/Planinng/Generate';
@@ -24,8 +21,7 @@ import ListPersonalDirectory from './components/Personal/ListDirectory';
 import Add from './components/Personal/Modify';
 import PersonalSistem from "./components/Personal/ListSistem";
 import ListShift from "./components/Planinng/ListShift";
-import Single from "./components/Personal/SinglePersonal";
-import IterationList from "./components/Planinng/IterationList";
+import IterationList from "./components/Planinng/ListIteration";
 
 
 function Copyright() {
@@ -223,9 +219,6 @@ function Paperbase(props) {
                   </Route>
                   <Route exact path='/personalSistem'>
                     <PersonalSistem />
-                  </Route>
-                  <Route exact path='/single/:idPersonal'>
-                    <Single />
                   </Route>
                   <Route exact path='/listShift'>
                     <Generate/>

@@ -103,17 +103,18 @@ function Content(props) {
     const [currentDate, setCurrentDate] = useState(Moment().format());
     const date_Gte = Moment(currentDate).startOf('month');
     const date_Lte = Moment(currentDate).endOf('month');
-    const { loading, data } = useQuery(SHIFT_LIST, {
+    const { loading, data,refetch } = useQuery(SHIFT_LIST, {
         variables: { date_Gte, date_Lte},
     });
-    const [changePersonalMigration,] = useMutation(UPDATE_SHIFT);
-
+    const [changePersonalMigration,{data:info}] = useMutation(UPDATE_SHIFT);
+    if (info){
+        refetch();
+    }
     const [changePersonal ,setChangePersonal] = useState({
         personal: false,
         shift:false,
     });
     const commitChange = (shift,personal) => {
-        setChangePersonal((changePersonal.personal)?{personal:false,shift:false}:{personal:personal,shift:shift});
         if(changePersonal.personal){
             changePersonalMigration({variables: {
                 person1:changePersonal.personal,
@@ -122,6 +123,8 @@ function Content(props) {
                 shift2:shift,
             }});
         }
+        setChangePersonal((changePersonal.personal)?{personal:false,shift:false}:{personal:personal,shift:shift});
+
     };
 
     const [uciId, setUciId] = useState("");
@@ -204,8 +207,8 @@ function Content(props) {
                                                 <TableCell align="center">
                                                     {row.node.person.edges.map(item => (
                                                         <div key={item.node.id}>
-                                                            <Link component={RouterLink} color="inherit" to ={`/single/${item.node.id}`}>{item.node.personal.name}</Link>
-                                                            <IconButton color ={(changePersonal.personal)?(item.node.id === changePersonal.personal)?"secondary":"primary" : "default"}  onClick={()=>commitChange(row.node.id,item.node.id)} >
+                                                            <Link component={RouterLink} color="inherit" to ={`/modify/${item.node.id}`}>{item.node.personal.name}</Link>
+                                                            <IconButton color ={(changePersonal.personal)?(item.node.id === changePersonal.personal && row.node.id === changePersonal.shift)?"secondary":"primary" : "default"}  onClick={()=>commitChange(row.node.id,item.node.id)} >
                                                                 <Autorenew/>
                                                             </IconButton>
                                                         </div>
