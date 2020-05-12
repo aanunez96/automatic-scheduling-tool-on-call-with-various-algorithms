@@ -60,15 +60,15 @@ function Content(props) {
     });
     const USER_LIST = gql`
     query Personal(
-        $uciId: String!,
+        $name: String!,
         $before:String!,
         $after:String!
     ) {
       personal(
-        ${(paginator.before !== ""?"last": "first")}:5,
+        ${(paginator.before !== ""?"last": "first")}:20,
         before:$before,
         after:$after,
-        id: $uciId
+        name_Icontains: $name,
       ){
         pageInfo{
           hasNextPage
@@ -90,11 +90,11 @@ function Content(props) {
     }
 `;
     const { classes } = props;
-    const [uciId, setUciId] = useState("");
+    const [name, setName] = useState("");
     const [textToFind, textToFindChange] = useState("");
     const [previusPage, setPreviusPage] = useState("");
     const { loading, data } = useQuery(USER_LIST, {
-        variables: { uciId ,before: paginator.before, after: paginator.after},fetchPolicy: "cache-network",
+        variables: { name ,before: paginator.before, after: paginator.after},fetchPolicy: "cache-network",
     });
 
     return (
@@ -108,7 +108,7 @@ function Content(props) {
                         <Grid item xs>
                             <TextField
                                 fullWidth
-                                placeholder="Buscar por uci id"
+                                placeholder="Buscar por Nombre"
                                 InputProps={{
                                     disableUnderline: true,
                                     className: classes.searchInput,
@@ -124,7 +124,7 @@ function Content(props) {
                                 variant="contained"
                                 color="primary"
                                 className={classes.addUser}
-                                onClick={() => {setUciId(textToFind)}}
+                                onClick={() => {setName(textToFind); setPreviusPage("");setPaginator({before: "", after:"",})}}
                             >
                                 Buscar
                             </Button>
