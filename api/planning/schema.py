@@ -37,7 +37,6 @@ class IterationFilter(django_filters.FilterSet):
     )
 
 
-
 class PersonalNode(DjangoObjectType):
     class Meta:
         model = Personal
@@ -50,6 +49,7 @@ class PersonalNode(DjangoObjectType):
             'person': ['exact'],
             'days': ['exact', 'icontains'],
             'available': ['exact'],
+            'name': ['icontains'],
         }
 
 

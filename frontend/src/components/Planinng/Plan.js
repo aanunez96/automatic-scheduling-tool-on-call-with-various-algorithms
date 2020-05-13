@@ -77,15 +77,16 @@ function Content(props){
     });
 
     if (!loading && data?.shift){
-        let instance = new Array()
+        let instance = new Array();
         data.shift.edges.forEach(row => {
            row.node.person.edges.forEach(item => {
+               console.log(item);
                instance.push({
-                    id: item.node.id,
-                    text: <Link component={RouterLink} color="inherit" to ={`/single/${item.node.personal.id}`}>{item.node.personal.name}</Link>,
+                    id: item.node.personal.id,
+                    text: <Link component={RouterLink} color="inherit" to ={`/modify/update/${item.node.personal.id}`}>{item.node.personal.name}</Link>,
                 })});
         });
-
+        console.log(instance);
         resources = [
             {
                 fieldName: 'personal',
@@ -93,13 +94,12 @@ function Content(props){
                 allowMultiple: true,
                 instances: instance,
             }];
-
         appointments = data.shift.edges.map(row => ({
             id: row.node.id,
             title: "turno " + row.node.number,
             startDate: Moment(row.node.date),
             endDate: Moment(row.node.date).add(2,'h'),
-            personal: row.node.person.edges.map(item => item.node.id),
+            personal: row.node.person.edges.map(item => item.node.personal.id),
         }));
     }
 

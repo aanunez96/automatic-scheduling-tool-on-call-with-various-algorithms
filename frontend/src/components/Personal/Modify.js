@@ -779,7 +779,6 @@ function Content(props){
     }else {
         if (data?.personal?.edges){
           personal = (data.personal.edges.find( row => row.node.id == idPersonal)).node;
-          console.log(personal);
           if(!render.day){
               setRender({...render,day: true});
               setWeekDay(wordDay(personal.days));

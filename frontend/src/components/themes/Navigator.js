@@ -28,7 +28,7 @@ const categories = [
     id: 'Planificacion',
     children: [
       { id: 'Turnos', icon: <EventNoteIcon /> ,active: false, link: '/listShift'},
-      { id: 'Iteraciones', icon: <TimerIcon /> ,active: false, link: '/listShift'},
+      { id: 'Iteraciones', icon: <TimerIcon /> ,active: false, link: '/iterationlist'},
     ],
   },
 ];
