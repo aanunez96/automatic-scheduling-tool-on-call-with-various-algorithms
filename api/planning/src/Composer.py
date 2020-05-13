@@ -75,11 +75,17 @@ class Composer:
                 iteration.save()
 
                 for shift in plan.shifts:
-                    created_shift = Shift(date=datetime.datetime.combine(shift.date,datetime.time(SHIFT_SCHEDULE[shift.number])), number=shift.number, iteration=iteration)
-                    created_shift.save()
+                    try:
+                        created_shift = Shift.object.get(date=datetime.datetime.combine(shift.date, datetime.time(SHIFT_SCHEDULE[shift.number])))
+
+                    except Shift.DoesNotExist:
+                        created_shift = Shift(date=datetime.datetime.combine(shift.date, datetime.time(SHIFT_SCHEDULE[shift.number])), number=shift.number, iteration=iteration)
+                        created_shift.save()
+
                     for personal in shift.personal:
                         person = personal.person
                         created_shift.person.add(person)
+
                 return iteration.id
         except IntegrityError:
             return -1

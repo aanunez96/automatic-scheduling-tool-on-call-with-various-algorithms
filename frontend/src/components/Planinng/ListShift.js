@@ -137,9 +137,10 @@ query Shift(
     const [changePersonal ,setChangePersonal] = useState({
         personal: false,
         personalName: "",
+        personRole:"",
         shift:false,
     });
-    const commitChange = (shift,personal,name) => {
+    const commitChange = (shift,personal,name,role) => {
         if(changePersonal.personal){
             changePersonalMigration({variables: {
                 person1:changePersonal.personal,
@@ -148,7 +149,7 @@ query Shift(
                 shift2:shift,
             }});
         }
-        setChangePersonal((changePersonal.personal)?{personal:false,shift:false,personalName:""}:{personal:personal,shift:shift,personalName:name});
+        setChangePersonal((changePersonal.personal)?{personal:false,shift:false,personalName:"",personRole:""}:{personal:personal,shift:shift,personalName:name,personRole:role});
     };
 
     return (
@@ -235,7 +236,11 @@ query Shift(
                                                     {row.node.person.edges.map(item => (
                                                         <div key={item.node.id}>
                                                             <Link component={RouterLink} color="inherit" to ={`/modify/update/${item.node.id}`}>{item.node.personal.name}</Link>
-                                                            <IconButton color ={(changePersonal.personal)?(item.node.id === changePersonal.personal && row.node.id === changePersonal.shift)?"secondary":"primary" : "default"}  onClick={()=>commitChange(row.node.id,item.node.id,item.node.personal.name)} >
+                                                            <IconButton
+                                                                disabled={(changePersonal.personal)? changePersonal.personRole !== item.node.personal.role||(changePersonal.personal !==item.node.id && changePersonal.shift ===row.node.id) : false}
+                                                                color={(changePersonal.personal)?(item.node.id === changePersonal.personal && row.node.id === changePersonal.shift)?"secondary":"primary" : "default"}
+                                                                onClick={()=>commitChange(row.node.id,item.node.id,item.node.personal.name,item.node.personal.role)}
+                                                            >
                                                                 <Autorenew/>
                                                             </IconButton>
                                                         </div>

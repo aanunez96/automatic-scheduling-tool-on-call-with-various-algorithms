@@ -743,6 +743,7 @@ const USER_LIST = gql`
                           personal{
                             id
                             name
+                            role
                           }
                         }
                       }
@@ -768,7 +769,7 @@ function Content(props){
     const [addPersonal, {data:infoMutate}] = useMutation(ADD_PERSONAL);
     const [weekDay, setWeekDay] = useState([]);
     const [render , setRender] = useState({day: false, modal:false});
-    const[openModal,setOpenModal] = useState(false);
+    const [openModal,setOpenModal] = useState(false);
 
     let personal = false;
     const { loading, data } = useQuery(USER_LIST, {
@@ -893,8 +894,8 @@ function Content(props){
                                 </Typography>
                                 {row.node.person.edges.map(item =>(
                                     <Grid container key={row.node.id}>
-                                        <Avatar  aria-label="recipe" className={(item.node.personal.role == "P")? classes.avatarP: classes.avatars}>
-                                            {(item.node.personal.role == "P")? "P": "S"}
+                                        <Avatar  aria-label="recipe" className={(item.node.personal.role === "P")? classes.avatarP: classes.avatars}>
+                                            {(item.node.personal.role === "P")? "P": "S"}
                                         </Avatar>
                                         <Typography color={(item.node.personal.id==personal.id)?"textPrymary":"textSecondary"} align="inherit">
                                                 {item.node.personal.name}
