@@ -6,7 +6,6 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
 import { withStyles } from '@material-ui/core/styles';
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
@@ -56,7 +55,7 @@ mutation DeleteIteration(
 `;
 
 function Content(props) {
-        const [paginator, setPaginator] = useState({
+    const [paginator, setPaginator] = useState({
        before: "",
        after:"",
     });
@@ -140,7 +139,7 @@ function Content(props) {
                                                 <TableCell align="center">{row.node.dateEnd}</TableCell>
                                                 <TableCell align="center">{row.node.algorithm}</TableCell>
                                                 <TableCell align="center">{row.node.heuristic}</TableCell>
-                                                <TableCell align="center">{row.node.typeGuard == "P" ? "Profesores":"Estudiantes"}</TableCell>
+                                                <TableCell align="center">{row.node.typeGuard === "P" ? "Profesores":"Estudiantes"}</TableCell>
                                                 <TableCell align="center">
                                                     <IconButton onClick={() => {setOpenModal(true);setIdIteration(row.node.id);}}>
                                                         <DeleteForever/>
