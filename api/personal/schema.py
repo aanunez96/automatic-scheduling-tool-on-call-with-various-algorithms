@@ -1,23 +1,12 @@
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
-from graphene import ObjectType
+from graphene import ObjectType , relay
 import graphene
 import graphql
 from personal.models import Person
 
-
-class DirectoryPersonal (ObjectType):
-    id = graphene.ID()
-    sex = graphene.String()
-    name = graphene.String()
-    role = graphene.String()
-
-
-class DirectoryQuery(ObjectType):
-    dierectory_personal = graphene.List(DirectoryPersonal)
-
-    def resolve_dierectory_personal(self,info: graphql.ResolveInfo):
-        people = [
+global people
+people = [
             {
                 "id": 35916,
                 "sex": "Male",
@@ -619,6 +608,36 @@ class DirectoryQuery(ObjectType):
                 "role": "Profesor"
             }
         ]
+
+
+class DirectoryPersonal (ObjectType):
+    id = graphene.Int()
+    sex = graphene.String()
+    name = graphene.String()
+    role = graphene.String()
+
+    class Meta:
+        # interfaces = (relay.Node,)
+        filter_fields = ["id_uci", "sex", "name", "role"]
+
+
+    # @classmethod
+    # def get_node(cls, info, id):
+    #     for person in people:
+    #         if person["id"] == id:
+    #             return person
+
+
+class DirectoryConnection(relay.ConnectionField):
+    class Meta:
+        node = DirectoryPersonal
+
+
+class DirectoryQuery(ObjectType):
+    dierectory_personal = graphene.List(DirectoryPersonal)
+   # node = relay.Node.Field()
+
+    def resolve_dierectory_personal(self,info: graphql.ResolveInfo):
         personal_as_obj_list = []
         for person in people:
             personal = DirectoryPersonal(id=person["id"], sex=person['sex'], name=person['name'], role=person['role'])

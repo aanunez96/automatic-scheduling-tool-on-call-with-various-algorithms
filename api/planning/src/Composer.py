@@ -10,6 +10,7 @@ import copy
 from django.db import transaction, IntegrityError
 import datetime
 from planning.settingApp import SHIFT_SCHEDULE
+import pytz
 
 
 class Composer:
@@ -79,7 +80,8 @@ class Composer:
                         created_shift = Shift.object.get(date=datetime.datetime.combine(shift.date, datetime.time(SHIFT_SCHEDULE[shift.number])))
 
                     except Shift.DoesNotExist:
-                        created_shift = Shift(date=datetime.datetime.combine(shift.date, datetime.time(SHIFT_SCHEDULE[shift.number])), number=shift.number, iteration=iteration)
+                        havana = pytz.timezone('America/Havana')
+                        created_shift = Shift(date=havana.localize(datetime.datetime.combine(shift.date, datetime.time(SHIFT_SCHEDULE[shift.number]))), number=shift.number, iteration=iteration)
                         created_shift.save()
 
                     for personal in shift.personal:

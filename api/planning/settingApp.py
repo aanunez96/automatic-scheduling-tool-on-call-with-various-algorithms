@@ -16,12 +16,12 @@ ALGORITHM_STUDENT = {
 
 SHIFT_FOR_PROFESOR = {
     'week': [1, 2, 3, 4, 5],
-    'weekend': [1, 2, 3, 4, 5, 7, 8],
+    'weekend': [1, 2, 3, 4, 5, 7],
 }
 
 SHIFT_FOR_STUDENT = {
     'week': [1, 2, 3, 4, 5],
-    'weekend': [6, 7, 1, 2, 3, 4, 5],
+    'weekend': [6, 7, 1, 2, 3, 4],
 }
 
 CONSTRAINT_STUDENT_STRONG = {
@@ -46,12 +46,11 @@ CONSTRAINT_PROFESOR_WEAK = {
 }
 
 SHIFT_SCHEDULE = {
-    1: 11,
-    2: 12,
-    3: 13,
-    4: 14,
-    5: 15,
+    1: 12,
+    2: 14,
+    3: 16,
+    4: 18,
+    5: 20,
     6: 8,
-    7: 9,
-    8: 10,
+    7: 10,
 }
