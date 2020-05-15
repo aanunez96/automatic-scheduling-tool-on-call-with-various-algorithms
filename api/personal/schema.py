@@ -2,7 +2,6 @@ from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene import ObjectType , relay
 import graphene
-import graphql
 from personal.models import Person
 
 global people
@@ -616,16 +615,8 @@ class DirectoryPersonal (ObjectType):
     name = graphene.String()
     role = graphene.String()
 
-    class Meta:
-        # interfaces = (relay.Node,)
-        filter_fields = ["id_uci", "sex", "name", "role"]
-
-
-    # @classmethod
-    # def get_node(cls, info, id):
-    #     for person in people:
-    #         if person["id"] == id:
-    #             return person
+    # class Meta:
+    #     interfaces = (relay.Node,)
 
 
 class DirectoryConnection(relay.ConnectionField):
@@ -634,14 +625,26 @@ class DirectoryConnection(relay.ConnectionField):
 
 
 class DirectoryQuery(ObjectType):
-    dierectory_personal = graphene.List(DirectoryPersonal)
-   # node = relay.Node.Field()
+    directory_personal = graphene.List(
+        DirectoryPersonal,
+        id_uci=graphene.String(),
+        sex=graphene.String(),
+        name=graphene.String(),
+        role=graphene.String()
+    )
 
-    def resolve_dierectory_personal(self,info: graphql.ResolveInfo):
+    @staticmethod
+    def resolve_directory_personal(root, info, id_uci=None, sex=None, name=None, role=None):
         personal_as_obj_list = []
         for person in people:
-            personal = DirectoryPersonal(id=person["id"], sex=person['sex'], name=person['name'], role=person['role'])
-            personal_as_obj_list.append(personal)
+            if(
+                (id_uci is None or int(id_uci) == person["id"])and
+                (sex is None or sex == person["sex"])and
+                (name is None or name == person["name"])and
+                (role is None or role == person["role"])
+            ):
+                personal = DirectoryPersonal(id=person["id"], sex=person['sex'], name=person['name'], role=person['role'])
+                personal_as_obj_list.append(personal)
         return personal_as_obj_list
 
 

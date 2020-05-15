@@ -44,7 +44,7 @@ const styles = theme => ({
 
 const PERSONAL = gql`
 {
-dierectoryPersonal{
+directoryPersonal{
    id
    sex
    name
@@ -69,9 +69,9 @@ function Content(props) {
     const { loading, data } = useQuery(PERSONAL,{fetchPolicy: "network-only"});
 
 
-    if (data?.personal?.edges && data?.dierectoryPersonal){
+    if (data?.personal?.edges && data?.directoryPersonal){
         personalSistem = data.personal.edges.map(row => row.node.id);
-        list = data.dierectoryPersonal.filter(row => personalSistem.indexOf(row.id.toString()) === -1);
+        list = data.directoryPersonal.filter(row => personalSistem.indexOf(row.id.toString()) === -1);
     }
     return (
         <Paper className={classes.paper}>
