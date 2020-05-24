@@ -3,14 +3,15 @@ from graphene_django.filter import DjangoFilterConnectionField
 from graphene import ObjectType, relay
 from repoPlan.models import Shift
 from planning.models import Iteration
-from personal.models import Person
+from planning.models import Personal
 import graphene
 import django_filters
 
 
 class ShiftFilter(django_filters.FilterSet):
     iteration = django_filters.filters.ModelChoiceFilter(queryset=Iteration.object.all())
-    person = django_filters.filters.ModelChoiceField(queryset=Person.object.all())
+    # person = django_filters.filters.ModelMultipleChoiceFilter(queryset=Person.object.all())
+    person = django_filters.filters.CharFilter(method='filter_by_ids')
 
     class Meta:
         model = Shift
@@ -20,6 +21,15 @@ class ShiftFilter(django_filters.FilterSet):
             'person': ['exact'],
             'iteration': ['exact'],
         }
+
+    def filter_by_ids(self, queryset, name, value):
+        if value == "":
+            return queryset
+        else:
+            ids = []
+            for person in Personal.object.filter(name__icontains=value):
+                ids.append(person.id)
+            return queryset.filter(person__in=ids)
 
 
 class ShiftNode(DjangoObjectType):

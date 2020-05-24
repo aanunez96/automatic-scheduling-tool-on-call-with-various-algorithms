@@ -79,6 +79,7 @@ query Shift(
   $date_Lte: DateTime!,
   $before:String!,
   $after:String!,
+  $person: String!,
 ) {
   shift(
     date_Gte: $date_Gte,
@@ -86,6 +87,7 @@ query Shift(
     ${(paginator.before !== ""?"last": "first")}:20,
     before:$before,
     after:$after,
+    person:$person
     ){
       pageInfo{
         hasNextPage
@@ -121,15 +123,10 @@ query Shift(
     const date_Lte = Moment(currentDate).endOf('month');
     const [name, setName] = useState("");
     const [textToFind, textToFindChange] = useState("");
-    const [person , setPerson]= useState([]);
-    const [render, setRender] = useState(false);
+    const [person , setPerson]= useState("");
     const { loading, data,refetch } = useQuery(SHIFT_LIST, {
-        variables: { date_Gte, date_Lte,before: paginator.before, after: paginator.after},
+        variables: { date_Gte, date_Lte,before: paginator.before, after: paginator.after,person},
     });
-    //  if(data?.personal?.edges && !render){
-    //     setRender(true);
-    //     setPerson(data.personal.edges.map(row => row.node.id));
-    // }
     const [changePersonalMigration,{data:info}] = useMutation(UPDATE_SHIFT);
     if (info){
         refetch();
@@ -205,7 +202,7 @@ query Shift(
                                 variant="contained"
                                 color="primary"
                                 className={classes.addUser}
-                                onClick={() => {setName(textToFind); setRender(false);}}
+                                onClick={() => {setPerson(textToFind)}}
                             >
                                 Buscar
                             </Button>
