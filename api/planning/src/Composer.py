@@ -23,26 +23,27 @@ class Composer:
     def compose(self, algorithm_profesor, algorithm_student, guard, date_profesor,date_student):
         returned = []
         compare = CompareSolutions()
+        if guard == 'P' or not guard:
+            input_profesor = Input('P', date_profesor)
+            self.message.percent = 10
+            self.message.save()
+            self.generateForAlgorithm(input_profesor, algorithm_profesor, 'P') if algorithm_profesor else self.generateAll(input_profesor, 'P')
+            self.message.percent = 50
+            self.message.save()
+            best_solution_profesor = compare.compare(self.plans_profesor, 'P')
+            self.message.percent = 70
+            self.message.save()
+            returned.append(self.save(best_solution_profesor, 'P'))
 
-        input_profesor = Input('P')
-        self.message.percent = 10
-        self.message.save()
-        self.generateForAlgorithm(input_profesor, algorithm_profesor, 'P') if algorithm_profesor else self.generateAll(input_profesor, 'P')
-        self.message.percent = 50
-        self.message.save()
-        best_solution_profesor = compare.compare(self.plans_profesor, 'P')
-        self.message.percent = 70
-        self.message.save()
-        returned.append(self.save(best_solution_profesor, 'P'))
-
-        input_student = Input('S')
-        self.message.percent = 80
-        self.message.save()
-        self.generateForAlgorithm(input_student, algorithm_student, 'S') if algorithm_student else self.generateAll(input_student, 'S')
-        best_solution_student = compare.compare(self.plans_student, 'S')
-        self.message.percent = 90
-        self.message.save()
-        returned.append(self.save(best_solution_student, 'S'))
+        if guard == 'S' or not guard:
+            input_student = Input('S', date_student)
+            self.message.percent = 80
+            self.message.save()
+            self.generateForAlgorithm(input_student, algorithm_student, 'S') if algorithm_student else self.generateAll(input_student, 'S')
+            best_solution_student = compare.compare(self.plans_student, 'S')
+            self.message.percent = 90
+            self.message.save()
+            returned.append(self.save(best_solution_student, 'S'))
 
         return returned
 

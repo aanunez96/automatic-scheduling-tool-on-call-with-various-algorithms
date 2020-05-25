@@ -79,6 +79,15 @@ function Content(props) {
   const { loading, data } = useQuery(PERCENT,{pollInterval:5000});
   const [render , setRender] = useState(false);
   const[openModal,setOpenModal] = useState(false);
+  const [dateStudent,setDateStudent] = React.useState(null);
+  const [dateProfesor,setDateProfesor] = React.useState(null);
+  const [checkboxState, setCheckboxState] = React.useState({
+    grasp: true,
+    staticProfesor: true,
+    staticStudent: true,
+    P: true,
+    S: true,
+  });
   if(message && !render){
       setRender(true);
       setOpenModal(true);
@@ -102,8 +111,12 @@ function Content(props) {
       const algorithmProfesor = [];
       const guard = [];
       const dateStart = new Array(2);
-      if(dateProfesor)dateStart[1]=dateProfesor;
-      if(dateStudent)dateStart[0]=dateStudent;
+      if(dateProfesor){
+          dateStart[1]=dateProfesor;
+      }
+      if(dateStudent){
+          dateStart[0]=dateStudent;
+      }
       for (let key in checkboxState){
           if (checkboxState[key]){
               (key === 'P' ||key === 'S')?guard.push(key) : (key === 'staticStudent')? algorithmStudent.push(key) : algorithmProfesor.push(key);
@@ -111,15 +124,6 @@ function Content(props) {
       }
       addMessage({variables: { algorithmStudent,algorithmProfesor,guard,dateStart}});
     }
-  const [checkboxState, setCheckboxState] = React.useState({
-    grasp: true,
-    staticProfesor: true,
-    staticStudent: true,
-    P: true,
-    S: true,
-  });
-  const [dateStudent,setDateStudent] = React.useState()
-  const [dateProfesor,setDateProfesor] = React.useState()
   const handleChangeCheckbox = (event) => {
     setCheckboxState({...checkboxState, [event.target.name]: event.target.checked });
     if(event.target.name === 'P'){
@@ -221,7 +225,7 @@ return (
                                 label="Pofesores"
                                 type="date"
                                 value={dateProfesor}
-                                onChange={setDateProfesor}
+                                onChange={event => setDateProfesor(event.target.value)}
                                 disabled={checkboxState.P? false: true }
                                 className={classes.textField}
                                 InputLabelProps={{
@@ -234,7 +238,7 @@ return (
                                 type="date"
                                 value={dateStudent}
                                 disabled={checkboxState.S? false: true }
-                                onChange={setDateStudent}
+                                onChange={event => setDateStudent(event.target.value)}
                                 className={classes.textField}
                                 InputLabelProps={{
                                   shrink: true,
