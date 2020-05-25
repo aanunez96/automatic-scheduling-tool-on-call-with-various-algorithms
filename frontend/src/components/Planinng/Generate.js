@@ -15,6 +15,8 @@ import { gql } from 'apollo-boost';
 import { withStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Paper from '@material-ui/core/Paper';
+import {PLANIFICATION_START,PLANIFICATION_END} from '../../reactRedux';
+import {connect, useDispatch, useStore} from 'react-redux';
 
 const styles = theme => ({
   expasionPanel: {
@@ -68,7 +70,9 @@ const PERCENT = gql`
 `;
 
 function Content(props) {
-  const { classes } = props;
+  const { classes} = props;
+  const dispatch = useDispatch();
+  const store = useStore();
   let completed = 0;
   let buffer = 10;
   const [addMessage,{data: message}] = useMutation(ADD_MESSAGE);
@@ -84,6 +88,13 @@ function Content(props) {
       let total = (array.reduce((accumulator, currentValue) => accumulator + currentValue,0))/data.message.edges.length;
       completed = total;
       buffer = Math.random() * 10 + completed;
+      if (data.message.edges.length !== 0){
+          if(!store.getState().planificationStart){
+              dispatch({type: PLANIFICATION_START});
+          }
+      }else {
+          dispatch({type: PLANIFICATION_END});
+      }
   }
 
   const generatePlanning = ()=>{
@@ -253,4 +264,4 @@ return (
                 </div>
 );
 }
-export default withStyles(styles)(Content);
+export default connect()(withStyles(styles)(Content));

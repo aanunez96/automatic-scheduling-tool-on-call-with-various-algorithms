@@ -22,6 +22,8 @@ import * as Moment from 'moment';
 import {createSvgIcon} from "@material-ui/core/utils";
 import { Link as RouterLink } from 'react-router-dom';
 import Link from '@material-ui/core/Link';
+import {REFETCH_PLAN} from '../../reactRedux';
+import {useSelector,useDispatch} from 'react-redux';
 
 const SHIFTS_LIST = gql`
 query Shift(
@@ -61,6 +63,7 @@ const timeTableCell = props => (
 
 function Content(props){
     const { classes } = props;
+    const dispatch = useDispatch();
     const [currentViewName, setCurrentViewName] = React.useState("Day");
     const [currentDate, setCurrentDate] = React.useState();
     let appointments;
@@ -69,24 +72,28 @@ function Content(props){
     const gte = Moment(currentDate).startOf(ofTime);
     const lte = Moment(currentDate).endOf(ofTime);
 
-    const { loading, data } = useQuery(SHIFTS_LIST,{
+    const { loading, data , refetch } = useQuery(SHIFTS_LIST,{
         variables:{
             date_Gte: gte,
             date_Lte: lte,
-        },
+        },fetchPolicy: "network-only"
     });
-
+    const selectFunction = (state) => {
+        if(state.plan){
+            refetch();
+            dispatch({type: REFETCH_PLAN});
+        }
+    };
+    const selector = useSelector(selectFunction);
     if (!loading && data?.shift){
         let instance = new Array();
         data.shift.edges.forEach(row => {
            row.node.person.edges.forEach(item => {
-               console.log(item);
                instance.push({
                     id: item.node.personal.id,
                     text: <Link component={RouterLink} color="inherit" to ={`/modify/update/${item.node.personal.id}`}>{item.node.personal.name}</Link>,
                 })});
         });
-        console.log(instance);
         resources = [
             {
                 fieldName: 'personal',
@@ -119,7 +126,6 @@ function Content(props){
             currentViewName={currentViewName}
             onCurrentViewNameChange={ data => {
                 setCurrentViewName(data);
-                console.log(data);
             }}
           />
 
@@ -153,4 +159,4 @@ function Content(props){
 Content.propTypes = {
     classes: PropTypes.object.isRequired,
 };
-export default (Content);
+export default Content;

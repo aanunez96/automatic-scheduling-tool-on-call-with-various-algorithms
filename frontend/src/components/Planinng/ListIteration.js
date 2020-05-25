@@ -18,6 +18,8 @@ import {useQuery, useMutation} from "@apollo/react-hooks";
 import IconButton from '@material-ui/core/IconButton';
 import {NavigateBefore, NavigateNext,DeleteForever} from '@material-ui/icons';
 import Modal from '@material-ui/core/Modal';
+import {REFETCH_LIST_ITERATION} from '../../reactRedux';
+import {useSelector,useDispatch} from 'react-redux';
 
 const styles = theme => ({
     paper: {
@@ -42,7 +44,6 @@ const styles = theme => ({
         transform: `translate(-50%, -50%)`,
     },
 });
-
 const DELETE_ITERATION = gql`
 mutation DeleteIteration(
     $id: ID!
@@ -65,7 +66,7 @@ function Content(props) {
       $after:String!
     ){
       iteration(
-        ${(paginator.before !== ""?"last": "first")}:1,
+        ${(paginator.before !== ""?"last": "first")}:10,
         before:$before,
         after:$after,
         orderBy:"-date_end"
@@ -90,6 +91,7 @@ function Content(props) {
     }
     `;
     const {classes} = props;
+    const dispatch = useDispatch();
     const [daleteIteration, {data:infoDelete}] = useMutation(DELETE_ITERATION);
     const [previusPage, setPreviusPage] = useState("");
     const {loading, data, refetch} = useQuery(ITERATION_LIST, {
@@ -110,6 +112,16 @@ function Content(props) {
         daleteIteration({variables: { id:idIteration}});
         setOpenModal(false);
     };
+
+    const selectFunction = (state) => {
+        if (state.listIteration){
+            refetch();
+            dispatch({type: REFETCH_LIST_ITERATION});
+        }
+    }
+    const selector = useSelector(selectFunction);
+
+
     return (
         <Paper className={classes.paper}>
         <div className={classes.contentWrapper}>
@@ -222,4 +234,4 @@ Content.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Content);
+export default  withStyles(styles)(Content);

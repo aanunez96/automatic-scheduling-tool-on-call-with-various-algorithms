@@ -21,7 +21,8 @@ import TableBody from "@material-ui/core/TableBody";
 import TextField from '@material-ui/core/TextField';
 import { Link as RouterLink } from 'react-router-dom';
 import Link from '@material-ui/core/Link';
-
+import {REFETCH_LIST_SHIFT} from '../../reactRedux';
+import {useDispatch,useSelector} from 'react-redux';
 
 const styles = theme => ({
     paper: {
@@ -47,6 +48,8 @@ const styles = theme => ({
         marginRight:    theme.spacing(4),
     }
 });
+
+
 const UPDATE_SHIFT = gql`
 mutation UpdateShift(
   $person1:ID!
@@ -118,14 +121,14 @@ query Shift(
 `;
     const [previusPage, setPreviusPage] = useState("");
     const { classes } = props;
+    const dispatch = useDispatch();
     const [currentDate, setCurrentDate] = useState(Moment().format());
     const date_Gte = Moment(currentDate).startOf('month');
     const date_Lte = Moment(currentDate).endOf('month');
-    const [name, setName] = useState("");
     const [textToFind, textToFindChange] = useState("");
     const [person , setPerson]= useState("");
     const { loading, data,refetch } = useQuery(SHIFT_LIST, {
-        variables: { date_Gte, date_Lte,before: paginator.before, after: paginator.after,person},
+        variables: { date_Gte, date_Lte,before: paginator.before, after: paginator.after,person},fetchPolicy: "network-only"
     });
     const [changePersonalMigration,{data:info}] = useMutation(UPDATE_SHIFT);
     if (info){
@@ -148,6 +151,14 @@ query Shift(
         }
         setChangePersonal((changePersonal.personal)?{personal:false,shift:false,personalName:"",personRole:""}:{personal:personal,shift:shift,personalName:name,personRole:role});
     };
+
+    const selectFunction = (state) => {
+        if (state.listShift){
+            refetch();
+            dispatch({type: REFETCH_LIST_SHIFT});
+        }
+    }
+    const selector = useSelector(selectFunction);
 
     return (
         <Paper className={classes.paper}>

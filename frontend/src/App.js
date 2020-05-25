@@ -22,7 +22,9 @@ import Add from './components/Personal/Modify';
 import PersonalSistem from "./components/Personal/ListSistem";
 import ListShift from "./components/Planinng/ListShift";
 import IterationList from "./components/Planinng/ListIteration";
-
+import {Provider} from 'react-redux';
+import { createStore } from 'redux'
+import {INITIAL_STATE,reducerApp } from './reactRedux'
 
 function Copyright() {
   return (
@@ -176,10 +178,11 @@ const styles = {
   },
 };
 
+let store = createStore(reducerApp,INITIAL_STATE);
+
 function Paperbase(props) {
   const { classes } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
-
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -187,55 +190,57 @@ function Paperbase(props) {
   return (
     <Router>
       <ThemeProvider theme={theme}>
-        <ApolloProvider client={apolloClient}>
-          <div className={classes.root}>
-            <CssBaseline />
-            <nav className={classes.drawer}>
-              <Hidden smUp implementation="js">
-                <Navigator
-                  PaperProps={{ style: { width: drawerWidth } }}
-                  variant="temporary"
-                  open={mobileOpen}
-                  onClose={handleDrawerToggle}
-                />
-              </Hidden>
-              <Hidden xsDown implementation="css">
-                <Navigator PaperProps={{ style: { width: drawerWidth } }} />
-              </Hidden>
-            </nav>
-            <div className={classes.app}>
-              <Header onDrawerToggle={handleDrawerToggle} />
-              <main className={classes.main}>
-                <Switch>
-                  <Route exact path="/">
-                    <Generate/>
-                    <Plan />
-                  </Route>
-                  <Route exact path="/directory">
-                    <ListPersonalDirectory/>
-                  </Route>
-                  <Route exact path='/modify/:action/:idPersonal'>
-                    <Add />
-                  </Route>
-                  <Route exact path='/personalSistem'>
-                    <PersonalSistem />
-                  </Route>
-                  <Route exact path='/listShift'>
-                    <Generate/>
-                    <ListShift />
-                  </Route>
-                  <Route exact path='/iterationlist'>
-                    <Generate/>
-                    <IterationList />
-                  </Route>
-                </Switch>
-              </main>
-              <footer className={classes.footer}>
-                <Copyright />
-              </footer>
+        <Provider store={store}>
+          <ApolloProvider client={apolloClient}>
+            <div className={classes.root}>
+              <CssBaseline />
+              <nav className={classes.drawer}>
+                <Hidden smUp implementation="js">
+                  <Navigator
+                    PaperProps={{ style: { width: drawerWidth } }}
+                    variant="temporary"
+                    open={mobileOpen}
+                    onClose={handleDrawerToggle}
+                  />
+                </Hidden>
+                <Hidden xsDown implementation="css">
+                  <Navigator PaperProps={{ style: { width: drawerWidth } }} />
+                </Hidden>
+              </nav>
+              <div className={classes.app}>
+                <Header onDrawerToggle={handleDrawerToggle} />
+                <main className={classes.main}>
+                  <Switch>
+                    <Route exact path="/">
+                      <Generate/>
+                      <Plan />
+                    </Route>
+                    <Route exact path="/directory">
+                      <ListPersonalDirectory/>
+                    </Route>
+                    <Route exact path='/modify/:action/:idPersonal'>
+                      <Add />
+                    </Route>
+                    <Route exact path='/personalSistem'>
+                      <PersonalSistem />
+                    </Route>
+                    <Route exact path='/listShift'>
+                      <Generate/>
+                      <ListShift />
+                    </Route>
+                    <Route exact path='/iterationlist'>
+                      <Generate/>
+                      <IterationList />
+                    </Route>
+                  </Switch>
+                </main>
+                <footer className={classes.footer}>
+                  <Copyright />
+                </footer>
+              </div>
             </div>
-          </div>
-        </ApolloProvider>
+          </ApolloProvider>
+        </Provider>
       </ThemeProvider>
     </Router>
   );
