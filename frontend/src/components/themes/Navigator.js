@@ -106,7 +106,7 @@ function Navigator(props) {
               </ListItemText>
             </ListItem>
             {children.map(({ id: childId, icon, active ,link }) => (
-              <Link component={RouterLink} color="inherit" to ={link}>
+              <Link key={childId} component={RouterLink} color="inherit" to ={link}>
                 <ListItem
                   key={childId}
                   button

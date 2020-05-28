@@ -1,4 +1,3 @@
-import { combineReducers } from 'redux';
 //actions
 export const PLANIFICATION_START = 'PLANIFICATION_START';
 export const PLANIFICATION_END = 'PLANIFICATION_END';

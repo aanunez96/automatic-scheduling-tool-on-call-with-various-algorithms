@@ -119,7 +119,7 @@ function Content(props) {
             dispatch({type: REFETCH_LIST_ITERATION});
         }
     }
-    const selector = useSelector(selectFunction);
+    useSelector(selectFunction);
 
 
     return (
@@ -169,7 +169,7 @@ function Content(props) {
 
                 }
         </div>
-        <AppBar className={classes.searchBar} position="static" color="transparent" elevation={0}>
+        <AppBar className={classes.searchBar} position="static" color="inherit" elevation={0}>
                 <Toolbar>
                     <Grid container spacing={2} alignItems="center">
                         <Grid item>

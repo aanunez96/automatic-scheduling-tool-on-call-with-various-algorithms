@@ -158,11 +158,11 @@ query Shift(
             dispatch({type: REFETCH_LIST_SHIFT});
         }
     }
-    const selector = useSelector(selectFunction);
+    useSelector(selectFunction);
 
     return (
         <Paper className={classes.paper}>
-            <AppBar className={classes.searchBar} position="static" color="transparent" elevation={0}>
+            <AppBar className={classes.searchBar} position="static" color="default" elevation={0}>
                 <Toolbar>
                     <Grid container spacing={2} alignItems="center">
                        { (changePersonal.personal)?
@@ -268,7 +268,7 @@ query Shift(
 
                 }
             </div>
-            <AppBar className={classes.searchBar} position="static" color="transparent" elevation={0}>
+            <AppBar className={classes.searchBar} position="static" color="inherit" elevation={0}>
                     <Toolbar>
                         <Grid container spacing={2} alignItems="center">
                             <Grid item>

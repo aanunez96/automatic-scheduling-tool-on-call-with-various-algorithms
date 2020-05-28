@@ -3,10 +3,9 @@ import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import { Link as RouterLink } from 'react-router-dom';
-import Link from '@material-ui/core/Link';
-import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import { withStyles } from '@material-ui/core/styles';
@@ -64,7 +63,7 @@ function Content(props) {
     const { classes } = props;
     let list = [];
     let personalSistem = [];
-    const [name, setname] = useState("");
+    // const [name, setname] = useState("");
     const [textToFind, textToFindChange] = useState("");
     const { loading, data } = useQuery(PERSONAL,{fetchPolicy: "network-only"});
 
@@ -109,6 +108,11 @@ function Content(props) {
                 </Toolbar>
             </AppBar>
             <div className={classes.contentWrapper}>
+                    {(loading) ?
+                        <Typography color="textSecondary" align="center">
+                            Loading...
+                        </Typography>
+                    :
                             <TableContainer component={Paper}>
                                 <Table className={classes.table} aria-label="customized table">
                                     <TableHead>
@@ -135,6 +139,7 @@ function Content(props) {
                                     </TableBody>
                                 </Table>
                             </TableContainer>
+        }
             </div>
         </Paper>
     );

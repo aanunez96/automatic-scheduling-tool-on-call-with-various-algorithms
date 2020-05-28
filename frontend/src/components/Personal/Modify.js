@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { useMutation,useQuery } from '@apollo/react-hooks';
-import { Link as RouterLink,useParams,Redirect } from 'react-router-dom';
+import { useParams,Redirect } from 'react-router-dom';
 import Paper from '@material-ui/core/Paper';
 import { withStyles,useTheme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -20,7 +20,6 @@ import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import { gql } from 'apollo-boost';
 import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import Avatar from '@material-ui/core/Avatar';
 import { red,blue } from '@material-ui/core/colors';
@@ -116,7 +115,7 @@ mutation CratePersonal(
 
 
 const wordDay = (item) =>{
-   let index = [].filter.call(item,e => e != ",");
+   let index = [].filter.call(item,e => e !== ",");
    return index.map(e => week[parseInt(e,10)-1]);
 };
 
@@ -189,7 +188,7 @@ function Content(props){
       if (action === "add") {
         personal = data.directoryPersonal[0];
       } else {
-        personal = (data.personal.edges.find(row => row.node.id == idPersonal)).node;
+        personal = (data.personal.edges.find(row => row.node.id === idPersonal)).node;
         if (!render.day) {
           setRender({...render, day: true});
           setWeekDay(wordDay(personal.days));
@@ -308,7 +307,7 @@ function Content(props){
                                         <Avatar  aria-label="recipe" className={(item.node.personal.role === "P")? classes.avatarP: classes.avatars}>
                                             {(item.node.personal.role === "P")? "P": "S"}
                                         </Avatar>
-                                        <Typography color={(item.node.personal.id==personal.id)?"textPrymary":"textSecondary"} align="inherit">
+                                        <Typography color={(item.node.personal.id === personal.id)?"textPrymary":"textSecondary"} align="inherit">
                                                 {item.node.personal.name}
                                         </Typography>
                                     </Grid>

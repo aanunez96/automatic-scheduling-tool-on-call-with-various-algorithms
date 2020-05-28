@@ -16,7 +16,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Paper from '@material-ui/core/Paper';
 import {PLANIFICATION_START,PLANIFICATION_END} from '../../reactRedux';
-import {connect, useDispatch, useStore} from 'react-redux';
+import { useDispatch, useStore} from 'react-redux';
 
 const styles = theme => ({
   expasionPanel: {
@@ -79,8 +79,8 @@ function Content(props) {
   const { loading, data } = useQuery(PERCENT,{pollInterval:5000});
   const [render , setRender] = useState(false);
   const[openModal,setOpenModal] = useState(false);
-  const [dateStudent,setDateStudent] = React.useState(null);
-  const [dateProfesor,setDateProfesor] = React.useState(null);
+  const [dateStudent,setDateStudent] = React.useState("");
+  const [dateProfesor,setDateProfesor] = React.useState("");
   const [checkboxState, setCheckboxState] = React.useState({
     grasp: true,
     staticProfesor: true,
@@ -268,4 +268,4 @@ return (
                 </div>
 );
 }
-export default connect()(withStyles(styles)(Content));
+export default withStyles(styles)(Content);

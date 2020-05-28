@@ -52,6 +52,10 @@ const week =[
     'Sabado',
     'Domingo',
 ];
+const wordDay = (item) =>{
+   let index = [].filter.call(item,e => e !== ",");
+   return index.map(e => week[parseInt(e,10)-1]);
+};
 
 function Content(props) {
     const [paginator, setPaginator] = useState({
@@ -84,6 +88,7 @@ function Content(props) {
             sex
             role
             children
+            days
           }
         }
       }
@@ -149,6 +154,7 @@ function Content(props) {
                                             <TableCell align="center">Rol</TableCell>
                                             <TableCell align="center">Hijos</TableCell>
                                             <TableCell align="center">Sexo</TableCell>
+                                            <TableCell align="center">Dias Inasignables</TableCell>
                                             <TableCell align="center"></TableCell>
                                         </TableRow>
                                     </TableHead>
@@ -162,6 +168,7 @@ function Content(props) {
                                                 <TableCell align="center">{row.node.role === 'S'?"Profesor" : "Estudiante" }</TableCell>
                                                 <TableCell align="center">{row.node.children ? "SI" : "No"}</TableCell>
                                                 <TableCell align="center">{row.node.sex === 'F'?"Mujer" : "Hombre" }</TableCell>
+                                                <TableCell align="center">{wordDay(row.node.days).map((item, index, arr) => arr.length - 1 === index ? `${item}.` : `${item}, `)}</TableCell>
                                                 <TableCell align="center">
                                                     <Button variant="contained" component={RouterLink} to={`/modify/update/${row.node.id}`} >
                                                         Modificar
@@ -179,7 +186,7 @@ function Content(props) {
 
                 }
             </div>
-        <AppBar className={classes.searchBar} position="static" color="transparent" elevation={0}>
+        <AppBar className={classes.searchBar} position="static" color="inherit" elevation={0}>
                 <Toolbar>
                     <Grid container spacing={2} alignItems="center">
                         <Grid item>

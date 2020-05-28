@@ -8,18 +8,15 @@ import {
   Appointments,
   Toolbar,
   ViewSwitcher,
-  MonthView,
   DayView,
   TodayButton,
   AppointmentTooltip,
   Resources,
 } from '@devexpress/dx-react-scheduler-material-ui';
-import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
 import { gql } from 'apollo-boost';
 import {useQuery} from "@apollo/react-hooks";
 import * as Moment from 'moment';
-import {createSvgIcon} from "@material-ui/core/utils";
 import { Link as RouterLink } from 'react-router-dom';
 import Link from '@material-ui/core/Link';
 import {REFETCH_PLAN} from '../../reactRedux';
@@ -54,15 +51,8 @@ query Shift(
   }
 }
 `;
-const timeTableCell = props => (
-  <MonthView.TimeTableCell
-    onDoubleClick={console.log("doble click")}
-  />
-);
-
 
 function Content(props){
-    const { classes } = props;
     const dispatch = useDispatch();
     const [currentViewName, setCurrentViewName] = React.useState("Day");
     const [currentDate, setCurrentDate] = React.useState();
@@ -84,9 +74,9 @@ function Content(props){
             dispatch({type: REFETCH_PLAN});
         }
     };
-    const selector = useSelector(selectFunction);
+    useSelector(selectFunction);
     if (!loading && data?.shift){
-        let instance = new Array();
+        let instance = [];
         data.shift.edges.forEach(row => {
            row.node.person.edges.forEach(item => {
                instance.push({
@@ -156,7 +146,4 @@ function Content(props){
       </Paper>
     );
 }
-Content.propTypes = {
-    classes: PropTypes.object.isRequired,
-};
 export default Content;

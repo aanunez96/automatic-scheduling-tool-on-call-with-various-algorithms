@@ -14,7 +14,6 @@ import { ApolloProvider } from '@apollo/react-hooks';
 import apolloClient from "./apolloClient";
 import Navigator from './components/themes/Navigator';
 import Header from './components/themes/Header';
-import UserList from './components/User/List';
 import Plan from './components/Planinng/Plan';
 import Generate from './components/Planinng/Generate';
 import ListPersonalDirectory from './components/Personal/ListDirectory';
