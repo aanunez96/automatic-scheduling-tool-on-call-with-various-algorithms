@@ -16,6 +16,8 @@ import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
+import IconButton from '@material-ui/core/IconButton';
+import {NavigateBefore, NavigateNext} from '@material-ui/icons';
 import { gql } from 'apollo-boost';
 import {useQuery} from "@apollo/react-hooks";
 
@@ -41,36 +43,60 @@ const styles = theme => ({
     },
 });
 
-const PERSONAL = gql`
-{
-directoryPersonal{
-   id
-   sex
-   name
-   role
-}
-personal{
-  edges{
-    node{
-      id
-    }
-  }
-}
-}
-`;
-
 function Content(props) {
     const { classes } = props;
     let list = [];
+    const [paginator, setPaginator] = useState({
+       before: "",
+       after:"",
+    });
+    const PERSONAL = gql`
+    query Personal(
+        $name: String!,
+        $before:String!,
+        $after:String!
+    ) {
+      directoryPersonal(
+        ${(paginator.before !== ""?"last": "first")}:20,
+        before:$before,
+        after:$after,
+        name: $name,
+      ){
+        pageInfo{
+          hasNextPage
+          hasPreviousPage
+          startCursor
+          endCursor
+        }
+        edges{
+          node{
+            id
+            name
+            sex
+            role
+          }
+        }
+      }
+    personal{
+      edges{
+        node{
+          id
+        }
+      }
+    }
+    }
+    `;
+    const [previusPage, setPreviusPage] = useState("");
     let personalSistem = [];
-    // const [name, setname] = useState("");
+    const [name, setName] = useState("");
     const [textToFind, textToFindChange] = useState("");
-    const { loading, data } = useQuery(PERSONAL,{fetchPolicy: "cache-and-network"});
+    const { loading, data } = useQuery(PERSONAL, {
+        variables: { name ,before: paginator.before, after: paginator.after},fetchPolicy: "cache-and-network",
+    });
 
-
-    if (data?.personal?.edges && data?.directoryPersonal){
+    if (data?.personal?.edges && data?.directoryPersonal?.edges){
         personalSistem = data.personal.edges.map(row => row.node.id);
-        list = data.directoryPersonal.filter(row => personalSistem.indexOf(row.id.toString()) === -1);
+        list = data.directoryPersonal.edges.filter(row => personalSistem.indexOf(row.node.id.toString()) === -1);
     }
     return (
         <Paper className={classes.paper}>
@@ -83,7 +109,7 @@ function Content(props) {
                         <Grid item xs>
                             <TextField
                                 fullWidth
-                                placeholder="Buscar por uci id"
+                                placeholder="Buscar por Nombre"
                                 InputProps={{
                                     disableUnderline: true,
                                     className: classes.searchInput,
@@ -99,7 +125,7 @@ function Content(props) {
                                 variant="contained"
                                 color="primary"
                                 className={classes.addUser}
-                                onClick={() => {}}
+                                onClick={() => {setName(textToFind); setPreviusPage("");setPaginator({before: "", after:"",})}}
                             >
                                 Buscar
                             </Button>
@@ -128,12 +154,12 @@ function Content(props) {
                                     <TableBody>
                                         {
                                             list.map(row => (
-                                            <TableRow color="secundary" key={row.id}>
-                                                <TableCell align="center">{row.name}</TableCell>
-                                                <TableCell align="center">{row.sex}</TableCell>
-                                                <TableCell align="center">{row.role}</TableCell>
+                                            <TableRow color="secundary" key={row.node.id}>
+                                                <TableCell align="center">{row.node.name}</TableCell>
+                                                <TableCell align="center">{row.node.sex}</TableCell>
+                                                <TableCell align="center">{row.node.role}</TableCell>
                                                 <TableCell align="center">
-                                                    <Button disanbled={loading} variant="contained" component={RouterLink} to={`/modify/add/${row.id}`} >
+                                                    <Button disabled={loading} variant="contained" component={RouterLink} to={`/modify/add/${row.node.id}`} >
                                                       Add
                                                     </Button>
                                                 </TableCell>
@@ -144,6 +170,26 @@ function Content(props) {
                             </TableContainer>
         }
             </div>
+            <AppBar className={classes.searchBar} position="static" color="inherit" elevation={0}>
+                <Toolbar>
+                    <Grid container spacing={2} alignItems="center">
+                        <Grid item>
+                            <IconButton
+                                disabled={!(data?.directoryPersonal?.pageInfo?.hasPreviousPage || previusPage === 'next')}
+                                onClick={() => {setPaginator({before: data.directoryPersonal.pageInfo.startCursor, after: ""}); setPreviusPage('previous');}}
+                                >
+                                <NavigateBefore/>
+                            </IconButton>
+                            <IconButton
+                                disabled={!(data?.directoryPersonal?.pageInfo?.hasNextPage || previusPage === 'previous')}
+                                onClick={() => {setPaginator({before: "" , after: data.directoryPersonal.pageInfo.endCursor}); setPreviusPage('next');}}
+                            >
+                                <NavigateNext/>
+                            </IconButton>
+                        </Grid>
+                    </Grid>
+                </Toolbar>
+            </AppBar>
         </Paper>
     );
 }

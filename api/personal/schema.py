@@ -639,19 +639,20 @@ class DirectoryQuery(ObjectType):
         role=graphene.String())
 
     @staticmethod
-    def resolve_directory_personal(root, info, id_uci=None, sex=None, name=None, role=None, **kwargs):
+    def resolve_directory_personal(root, info, id_uci=None, sex=None, name="", role=None, **kwargs):
         personal_as_obj_list = []
         for person in people:
             if(
                 (id_uci is None or int(id_uci) == person["id"])and
                 (sex is None or sex == person["sex"])and
-                (name is None or name == person["name"])and
+                (name == person["name"] or name.lower() in person["name"].lower() or name == "")and
                 (role is None or role == person["role"])
             ):
                 personal = DirectoryPersonal(id=person["id"], sex=person['sex'], name=person['name'], role=person['role'])
                 personal_as_obj_list.append(personal)
         # return personal_as_obj_list
         return personal_as_obj_list
+
 
 class PersonNode(DjangoObjectType):
     class Meta:
