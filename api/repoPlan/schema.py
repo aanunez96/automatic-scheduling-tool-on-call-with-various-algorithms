@@ -10,7 +10,6 @@ import django_filters
 
 class ShiftFilter(django_filters.FilterSet):
     iteration = django_filters.filters.ModelChoiceFilter(queryset=Iteration.object.all())
-    # person = django_filters.filters.ModelMultipleChoiceFilter(queryset=Person.object.all())
     person = django_filters.filters.CharFilter(method='filter_by_ids')
 
     class Meta:

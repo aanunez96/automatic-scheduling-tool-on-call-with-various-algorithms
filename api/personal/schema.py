@@ -619,22 +619,27 @@ class DirectoryPersonal (ObjectType):
     #     interfaces = (relay.Node,)
 
 
-class DirectoryConnection(relay.ConnectionField):
+class DirectoryConnection(relay.Connection):
     class Meta:
         node = DirectoryPersonal
 
 
 class DirectoryQuery(ObjectType):
-    directory_personal = graphene.List(
-        DirectoryPersonal,
+    # directory_personal = graphene.List(
+    #     DirectoryPersonal,
+    #     id_uci=graphene.String(),
+    #     sex=graphene.String(),
+    #     name=graphene.String(),
+    #     role=graphene.String()
+    # )
+    directory_personal = relay.ConnectionField(DirectoryConnection,
         id_uci=graphene.String(),
         sex=graphene.String(),
         name=graphene.String(),
-        role=graphene.String()
-    )
+        role=graphene.String())
 
     @staticmethod
-    def resolve_directory_personal(root, info, id_uci=None, sex=None, name=None, role=None):
+    def resolve_directory_personal(root, info, id_uci=None, sex=None, name=None, role=None, **kwargs):
         personal_as_obj_list = []
         for person in people:
             if(
@@ -645,8 +650,8 @@ class DirectoryQuery(ObjectType):
             ):
                 personal = DirectoryPersonal(id=person["id"], sex=person['sex'], name=person['name'], role=person['role'])
                 personal_as_obj_list.append(personal)
+        # return personal_as_obj_list
         return personal_as_obj_list
-
 
 class PersonNode(DjangoObjectType):
     class Meta:
