@@ -13,11 +13,11 @@ import {
   AppointmentTooltip,
   Resources,
 } from '@devexpress/dx-react-scheduler-material-ui';
-import Typography from '@material-ui/core/Typography';
 import { gql } from 'apollo-boost';
 import {useQuery} from "@apollo/react-hooks";
 import * as Moment from 'moment';
 import { Link as RouterLink } from 'react-router-dom';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import Link from '@material-ui/core/Link';
 import {REFETCH_PLAN} from '../../reactRedux';
 import {useSelector,useDispatch} from 'react-redux';
@@ -39,6 +39,7 @@ query Shift(
         person{
           edges{
             node{
+              id
               personal{
               name  
               id
@@ -66,7 +67,7 @@ function Content(props){
         variables:{
             date_Gte: gte,
             date_Lte: lte,
-        },fetchPolicy: "network-only"
+        },fetchPolicy: "cache-and-network"
     });
     const selectFunction = (state) => {
         if(state.plan){
@@ -103,10 +104,10 @@ function Content(props){
     return (
       <Paper>
         {(loading)?
-            <Typography color="textSecondary" align="center">
-                            Loading...
-                        </Typography>
+            <LinearProgress />
         :
+        ""
+    }
         <Scheduler
           data={appointments}
         >
@@ -142,7 +143,6 @@ function Content(props){
               mainResourceName="personal"
            />
         </Scheduler>
-        }
       </Paper>
     );
 }

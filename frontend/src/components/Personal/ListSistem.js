@@ -11,6 +11,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import { gql } from 'apollo-boost';
 import {useQuery} from "@apollo/react-hooks";
 import { Link as RouterLink } from 'react-router-dom';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
@@ -99,7 +100,7 @@ function Content(props) {
     const [textToFind, textToFindChange] = useState("");
     const [previusPage, setPreviusPage] = useState("");
     const { loading, data } = useQuery(USER_LIST, {
-        variables: { name ,before: paginator.before, after: paginator.after},fetchPolicy: "cache-network",
+        variables: { name ,before: paginator.before, after: paginator.after},fetchPolicy: "cache-and-network",
     });
 
     return (
@@ -138,14 +139,16 @@ function Content(props) {
                 </Toolbar>
             </AppBar>
             <div className={classes.contentWrapper}>
-                {(loading) ?
-                        <Typography color="textSecondary" align="center">
-                            Loading...
-                        </Typography>
+                {(!data) ?
+                        <LinearProgress />
                     :
 
                         (data?.personal?.edges)?
                             <TableContainer component={Paper}>
+                                {(loading)?
+                                    <LinearProgress />
+                                    :
+                                    ""}
                                 <Table aria-label="customized table">
                                     <TableHead>
                                         <TableRow>
@@ -170,7 +173,7 @@ function Content(props) {
                                                 <TableCell align="center">{row.node.sex === 'F'?"Mujer" : "Hombre" }</TableCell>
                                                 <TableCell align="center">{wordDay(row.node.days).map((item, index, arr) => arr.length - 1 === index ? `${item}.` : `${item}, `)}</TableCell>
                                                 <TableCell align="center">
-                                                    <Button variant="contained" component={RouterLink} to={`/modify/update/${row.node.id}`} >
+                                                    <Button disabled={loading} variant="contained" component={RouterLink} to={`/modify/update/${row.node.id}`} >
                                                         Modificar
                                                     </Button>
                                                 </TableCell>

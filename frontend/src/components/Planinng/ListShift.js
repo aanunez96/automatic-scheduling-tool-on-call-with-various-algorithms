@@ -10,6 +10,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { gql } from 'apollo-boost';
 import {useQuery,useMutation} from "@apollo/react-hooks";
 import * as Moment from 'moment';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import IconButton from '@material-ui/core/IconButton';
 import {NavigateBefore ,Search,NavigateNext,Autorenew} from '@material-ui/icons';
 import TableContainer from "@material-ui/core/TableContainer";
@@ -108,6 +109,7 @@ query Shift(
             node{
               id
               personal{
+                id
                 name
                 role
               }
@@ -128,7 +130,7 @@ query Shift(
     const [textToFind, textToFindChange] = useState("");
     const [person , setPerson]= useState("");
     const { loading, data,refetch } = useQuery(SHIFT_LIST, {
-        variables: { date_Gte, date_Lte,before: paginator.before, after: paginator.after,person},fetchPolicy: "network-only"
+        variables: { date_Gte, date_Lte,before: paginator.before, after: paginator.after,person},fetchPolicy: "cache-and-network"
     });
     const [changePersonalMigration,{data:info}] = useMutation(UPDATE_SHIFT);
     if (info){
@@ -223,9 +225,7 @@ query Shift(
             </AppBar>
             <div className={classes.contentWrapper}>
                 {(loading) ?
-                        <Typography color="textSecondary" align="center">
-                            Loading...
-                        </Typography>
+                        <LinearProgress />
                     :
                         (data?.shift?.edges)?
                             <TableContainer component={Paper}>

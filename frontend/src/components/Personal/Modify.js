@@ -307,7 +307,7 @@ function Content(props){
                                         <Avatar  aria-label="recipe" className={(item.node.personal.role === "P")? classes.avatarP: classes.avatars}>
                                             {(item.node.personal.role === "P")? "P": "S"}
                                         </Avatar>
-                                        <Typography color={(item.node.personal.id === personal.id)?"textPrymary":"textSecondary"} align="inherit">
+                                        <Typography color={(item.node.personal.id === personal.id)?"textPrimary":"textSecondary"} align="inherit">
                                                 {item.node.personal.name}
                                         </Typography>
                                     </Grid>

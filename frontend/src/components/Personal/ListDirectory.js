@@ -5,11 +5,11 @@ import Toolbar from '@material-ui/core/Toolbar';
 import { Link as RouterLink } from 'react-router-dom';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import { withStyles } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
@@ -65,7 +65,7 @@ function Content(props) {
     let personalSistem = [];
     // const [name, setname] = useState("");
     const [textToFind, textToFindChange] = useState("");
-    const { loading, data } = useQuery(PERSONAL,{fetchPolicy: "network-only"});
+    const { loading, data } = useQuery(PERSONAL,{fetchPolicy: "cache-and-network"});
 
 
     if (data?.personal?.edges && data?.directoryPersonal){
@@ -108,12 +108,14 @@ function Content(props) {
                 </Toolbar>
             </AppBar>
             <div className={classes.contentWrapper}>
-                    {(loading) ?
-                        <Typography color="textSecondary" align="center">
-                            Loading...
-                        </Typography>
+                    {(!list) ?
+                        <LinearProgress />
                     :
                             <TableContainer component={Paper}>
+                                {(loading)?
+                                <LinearProgress />
+                                :
+                                ""}
                                 <Table className={classes.table} aria-label="customized table">
                                     <TableHead>
                                         <TableRow>
@@ -124,13 +126,14 @@ function Content(props) {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {list.map(row => (
+                                        {
+                                            list.map(row => (
                                             <TableRow color="secundary" key={row.id}>
                                                 <TableCell align="center">{row.name}</TableCell>
                                                 <TableCell align="center">{row.sex}</TableCell>
                                                 <TableCell align="center">{row.role}</TableCell>
                                                 <TableCell align="center">
-                                                    <Button variant="contained" component={RouterLink} to={`/modify/add/${row.id}`} >
+                                                    <Button disanbled={loading} variant="contained" component={RouterLink} to={`/modify/add/${row.id}`} >
                                                       Add
                                                     </Button>
                                                 </TableCell>

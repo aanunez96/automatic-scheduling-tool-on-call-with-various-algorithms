@@ -7,6 +7,7 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
@@ -95,7 +96,7 @@ function Content(props) {
     const [daleteIteration, {data:infoDelete}] = useMutation(DELETE_ITERATION);
     const [previusPage, setPreviusPage] = useState("");
     const {loading, data, refetch} = useQuery(ITERATION_LIST, {
-        variables: {before: paginator.before, after: paginator.after},fetchPolicy: "network-only",
+        variables: {before: paginator.before, after: paginator.after},fetchPolicy: "cache-and-network",
     });
     const[openModal,setOpenModal] = useState(false);
     const[openResult,setOpenResult] = useState(false);
@@ -125,14 +126,15 @@ function Content(props) {
     return (
         <Paper className={classes.paper}>
         <div className={classes.contentWrapper}>
-            {(loading) ?
-                        <Typography color="textSecondary" align="center">
-                            Loading...
-
-                        </Typography>
+            {(!data) ?
+                        <LinearProgress />
                     :
                         (data?.iteration?.edges)?
                             <TableContainer component={Paper}>
+                                    {(loading)?
+                                    <LinearProgress />
+                                    :
+                                    ""}
                                 <Table className={classes.table} aria-label="customized table">
                                     <TableHead>
                                         <TableRow>
@@ -153,7 +155,7 @@ function Content(props) {
                                                 <TableCell align="center">{row.node.heuristic}</TableCell>
                                                 <TableCell align="center">{row.node.typeGuard === "P" ? "Profesores":"Estudiantes"}</TableCell>
                                                 <TableCell align="center">
-                                                    <IconButton onClick={() => {setOpenModal(true);setIdIteration(row.node.id);}}>
+                                                    <IconButton disanbled={loading} onClick={() => {setOpenModal(true);setIdIteration(row.node.id);}}>
                                                         <DeleteForever/>
                                                     </IconButton>
                                                 </TableCell>
@@ -164,7 +166,7 @@ function Content(props) {
                             </TableContainer>
                             :
                             <Typography color="textSecondary" align="center">
-                                No users for this project yet
+                                No Iteration for this project yet
                             </Typography>
 
                 }
