@@ -44,7 +44,7 @@ INSTALLED_APPS = [
 
     'student.apps.StudentConfig',
     'planning.apps.PlanningConfig',
-    'repoPlan.apps.RepoplanConfig',
+    'repo_plan.apps.RepoplanConfig',
     'personal.apps.PersonalConfig',
 ]
 

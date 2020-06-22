@@ -7,7 +7,7 @@ import django.db.models.manager
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('repoPlan', '0003_remove_shift_person'),
+        ('repo_plan', '0003_remove_shift_person'),
         ('personal', '0003_auto_20200327_1812'),
     ]
 
@@ -25,6 +25,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='person',
             name='shift',
-            field=models.ManyToManyField(to='repoPlan.Shift'),
+            field=models.ManyToManyField(to='repo_plan.Shift'),
         ),
     ]

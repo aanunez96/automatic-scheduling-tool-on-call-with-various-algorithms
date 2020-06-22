@@ -1,5 +1,5 @@
 from planning.constraints.Constriant import Constraint
-from repoPlan.FacadeRepoPlan import FacadeRepo
+from repo_plan.FacadeRepoPlan import FacadeRepo
 
 
 class ShiftsRotations (Constraint):

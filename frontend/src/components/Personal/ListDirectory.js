@@ -2,12 +2,12 @@ import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import { Link as RouterLink } from 'react-router-dom';
+import {Link as RouterLink} from 'react-router-dom';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import { withStyles } from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import TableContainer from "@material-ui/core/TableContainer";
@@ -18,7 +18,7 @@ import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import IconButton from '@material-ui/core/IconButton';
 import {NavigateBefore, NavigateNext} from '@material-ui/icons';
-import { gql } from 'apollo-boost';
+import {gql} from 'apollo-boost';
 import {useQuery} from "@apollo/react-hooks";
 
 const styles = theme => ({
@@ -44,11 +44,11 @@ const styles = theme => ({
 });
 
 function Content(props) {
-    const { classes } = props;
+    const {classes} = props;
     let list = [];
     const [paginator, setPaginator] = useState({
-       before: "",
-       after:"",
+        before: "",
+        after: "",
     });
     const PERSONAL = gql`
     query Personal(
@@ -57,7 +57,7 @@ function Content(props) {
         $after:String!
     ) {
       directoryPersonal(
-        ${(paginator.before !== ""?"last": "first")}:20,
+        ${(paginator.before !== "" ? "last" : "first")}:20,
         before:$before,
         after:$after,
         name: $name,
@@ -87,16 +87,16 @@ function Content(props) {
     }
     `;
     const [previusPage, setPreviusPage] = useState("");
-    let personalSistem = [];
+    let personalSystem = [];
     const [name, setName] = useState("");
     const [textToFind, textToFindChange] = useState("");
-    const { loading, data } = useQuery(PERSONAL, {
-        variables: { name ,before: paginator.before, after: paginator.after},fetchPolicy: "cache-and-network",
+    const {loading, data} = useQuery(PERSONAL, {
+        variables: {name, before: paginator.before, after: paginator.after}, fetchPolicy: "cache-and-network",
     });
 
-    if (data?.personal?.edges && data?.directoryPersonal?.edges){
-        personalSistem = data.personal.edges.map(row => row.node.id);
-        list = data.directoryPersonal.edges.filter(row => personalSistem.indexOf(row.node.id.toString()) === -1);
+    if (data?.personal?.edges && data?.directoryPersonal?.edges) {
+        personalSystem = data.personal.edges.map(row => row.node.id);
+        list = data.directoryPersonal.edges.filter(row => personalSystem.indexOf(row.node.id.toString()) === -1);
     }
     return (
         <Paper className={classes.paper}>
@@ -104,7 +104,7 @@ function Content(props) {
                 <Toolbar>
                     <Grid container spacing={2} alignItems="center">
                         <Grid item>
-                            <SearchIcon className={classes.block} color="inherit" />
+                            <SearchIcon className={classes.block} color="inherit"/>
                         </Grid>
                         <Grid item xs>
                             <TextField
@@ -125,7 +125,11 @@ function Content(props) {
                                 variant="contained"
                                 color="primary"
                                 className={classes.addUser}
-                                onClick={() => {setName(textToFind); setPreviusPage("");setPaginator({before: "", after:"",})}}
+                                onClick={() => {
+                                    setName(textToFind);
+                                    setPreviusPage("");
+                                    setPaginator({before: "", after: "",})
+                                }}
                             >
                                 Buscar
                             </Button>
@@ -134,41 +138,42 @@ function Content(props) {
                 </Toolbar>
             </AppBar>
             <div className={classes.contentWrapper}>
-                    {(!list) ?
-                        <LinearProgress />
+                {(!list) ?
+                    <LinearProgress/>
                     :
-                            <TableContainer component={Paper}>
-                                {(loading)?
-                                <LinearProgress />
-                                :
-                                ""}
-                                <Table className={classes.table} aria-label="customized table">
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell align="center">name</TableCell>
-                                            <TableCell align="center">sex</TableCell>
-                                            <TableCell align="center">role</TableCell>
-                                            <TableCell align="center">action</TableCell>
+                    <TableContainer component={Paper}>
+                        {(loading) ?
+                            <LinearProgress/>
+                            :
+                            ""}
+                        <Table className={classes.table} aria-label="customized table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell align="center">name</TableCell>
+                                    <TableCell align="center">sex</TableCell>
+                                    <TableCell align="center">role</TableCell>
+                                    <TableCell align="center">action</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {
+                                    list.map(row => (
+                                        <TableRow color="secundary" key={row.node.id}>
+                                            <TableCell align="center">{row.node.name}</TableCell>
+                                            <TableCell align="center">{row.node.sex}</TableCell>
+                                            <TableCell align="center">{row.node.role}</TableCell>
+                                            <TableCell align="center">
+                                                <Button disabled={loading} variant="contained" component={RouterLink}
+                                                        to={`/modify/add/${row.node.id}`}>
+                                                    Add
+                                                </Button>
+                                            </TableCell>
                                         </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {
-                                            list.map(row => (
-                                            <TableRow color="secundary" key={row.node.id}>
-                                                <TableCell align="center">{row.node.name}</TableCell>
-                                                <TableCell align="center">{row.node.sex}</TableCell>
-                                                <TableCell align="center">{row.node.role}</TableCell>
-                                                <TableCell align="center">
-                                                    <Button disabled={loading} variant="contained" component={RouterLink} to={`/modify/add/${row.node.id}`} >
-                                                      Add
-                                                    </Button>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-        }
+                                    ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                }
             </div>
             <AppBar className={classes.searchBar} position="static" color="inherit" elevation={0}>
                 <Toolbar>
@@ -176,13 +181,19 @@ function Content(props) {
                         <Grid item>
                             <IconButton
                                 disabled={!(data?.directoryPersonal?.pageInfo?.hasPreviousPage || previusPage === 'next')}
-                                onClick={() => {setPaginator({before: data.directoryPersonal.pageInfo.startCursor, after: ""}); setPreviusPage('previous');}}
-                                >
+                                onClick={() => {
+                                    setPaginator({before: data.directoryPersonal.pageInfo.startCursor, after: ""});
+                                    setPreviusPage('previous');
+                                }}
+                            >
                                 <NavigateBefore/>
                             </IconButton>
                             <IconButton
                                 disabled={!(data?.directoryPersonal?.pageInfo?.hasNextPage || previusPage === 'previous')}
-                                onClick={() => {setPaginator({before: "" , after: data.directoryPersonal.pageInfo.endCursor}); setPreviusPage('next');}}
+                                onClick={() => {
+                                    setPaginator({before: "", after: data.directoryPersonal.pageInfo.endCursor});
+                                    setPreviusPage('next');
+                                }}
                             >
                                 <NavigateNext/>
                             </IconButton>

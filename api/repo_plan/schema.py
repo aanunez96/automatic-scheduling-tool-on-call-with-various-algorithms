@@ -1,7 +1,7 @@
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene import ObjectType, relay
-from repoPlan.models import Shift
+from repo_plan.models import Shift
 from planning.models import Iteration
 from planning.models import Personal
 import graphene

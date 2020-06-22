@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class RepoplanConfig(AppConfig):
-    name = 'repoPlan'
+    name = 'repo_plan'

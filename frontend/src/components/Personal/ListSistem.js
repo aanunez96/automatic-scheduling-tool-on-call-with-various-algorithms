@@ -6,11 +6,11 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
-import { withStyles } from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
-import { gql } from 'apollo-boost';
+import {gql} from 'apollo-boost';
 import {useQuery} from "@apollo/react-hooks";
-import { Link as RouterLink } from 'react-router-dom';
+import {Link as RouterLink} from 'react-router-dom';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
@@ -44,7 +44,7 @@ const styles = theme => ({
         margin: '40px 16px',
     },
 });
-const week =[
+const week = [
     'Lunes',
     'Martes',
     'Miercoles',
@@ -53,15 +53,15 @@ const week =[
     'Sabado',
     'Domingo',
 ];
-const wordDay = (item) =>{
-   let index = [].filter.call(item,e => e !== ",");
-   return index.map(e => week[parseInt(e,10)-1]);
+const wordDay = (item) => {
+    let index = [].filter.call(item, e => e !== ",");
+    return index.map(e => week[parseInt(e, 10) - 1]);
 };
 
 function Content(props) {
     const [paginator, setPaginator] = useState({
-       before: "",
-       after:"",
+        before: "",
+        after: "",
     });
     const USER_LIST = gql`
     query Personal(
@@ -70,7 +70,7 @@ function Content(props) {
         $after:String!
     ) {
       personal(
-        ${(paginator.before !== ""?"last": "first")}:20,
+        ${(paginator.before !== "" ? "last" : "first")}:20,
         before:$before,
         after:$after,
         name_Icontains: $name,
@@ -95,12 +95,12 @@ function Content(props) {
       }
     }
 `;
-    const { classes } = props;
+    const {classes} = props;
     const [name, setName] = useState("");
     const [textToFind, textToFindChange] = useState("");
     const [previusPage, setPreviusPage] = useState("");
-    const { loading, data } = useQuery(USER_LIST, {
-        variables: { name ,before: paginator.before, after: paginator.after},fetchPolicy: "cache-and-network",
+    const {loading, data} = useQuery(USER_LIST, {
+        variables: {name, before: paginator.before, after: paginator.after}, fetchPolicy: "cache-and-network",
     });
 
     return (
@@ -109,7 +109,7 @@ function Content(props) {
                 <Toolbar>
                     <Grid container spacing={2} alignItems="center">
                         <Grid item>
-                            <SearchIcon className={classes.block} color="inherit" />
+                            <SearchIcon className={classes.block} color="inherit"/>
                         </Grid>
                         <Grid item xs>
                             <TextField
@@ -130,7 +130,11 @@ function Content(props) {
                                 variant="contained"
                                 color="primary"
                                 className={classes.addUser}
-                                onClick={() => {setName(textToFind); setPreviusPage("");setPaginator({before: "", after:"",})}}
+                                onClick={() => {
+                                    setName(textToFind);
+                                    setPreviusPage("");
+                                    setPaginator({before: "", after: "",})
+                                }}
                             >
                                 Buscar
                             </Button>
@@ -140,68 +144,80 @@ function Content(props) {
             </AppBar>
             <div className={classes.contentWrapper}>
                 {(!data) ?
-                        <LinearProgress />
+                    <LinearProgress/>
                     :
 
-                        (data?.personal?.edges)?
-                            <TableContainer component={Paper}>
-                                {(loading)?
-                                    <LinearProgress />
-                                    :
-                                    ""}
-                                <Table aria-label="customized table">
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell align="center">Nombre</TableCell>
-                                            <TableCell align="center">Disponible</TableCell>
-                                            <TableCell align="center">Rol</TableCell>
-                                            <TableCell align="center">Hijos</TableCell>
-                                            <TableCell align="center">Sexo</TableCell>
-                                            <TableCell align="center">Dias Inasignables</TableCell>
-                                            <TableCell align="center"></TableCell>
+                    (data?.personal?.edges) ?
+                        <TableContainer component={Paper}>
+                            {(loading) ?
+                                <LinearProgress/>
+                                :
+                                ""}
+                            <Table aria-label="customized table">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell align="center">Nombre</TableCell>
+                                        <TableCell align="center">Disponible</TableCell>
+                                        <TableCell align="center">Rol</TableCell>
+                                        <TableCell align="center">Hijos</TableCell>
+                                        <TableCell align="center">Sexo</TableCell>
+                                        <TableCell align="center">Dias Inasignables</TableCell>
+                                        <TableCell align="center"></TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {data.personal.edges.map(row => (
+                                        <TableRow key={row.node.id}>
+                                            <TableCell align="center">
+                                                <Link component={RouterLink} color="inherit"
+                                                      to={`/modify/update/${row.node.id}`}>{row.node.name}</Link>
+                                            </TableCell>
+                                            <TableCell
+                                                align="center">{row.node.available ? "Activo" : "Inactivo"}</TableCell>
+                                            <TableCell
+                                                align="center">{row.node.role === 'S' ? "Profesor" : "Estudiante"}</TableCell>
+                                            <TableCell align="center">{row.node.children ? "SI" : "No"}</TableCell>
+                                            <TableCell
+                                                align="center">{row.node.sex === 'F' ? "Mujer" : "Hombre"}</TableCell>
+                                            <TableCell
+                                                align="center">{wordDay(row.node.days).map((item, index, arr) => arr.length - 1 === index ? `${item}.` : `${item}, `)}</TableCell>
+                                            <TableCell align="center">
+                                                <Button disabled={loading} variant="contained" component={RouterLink}
+                                                        to={`/modify/update/${row.node.id}`}>
+                                                    Modificar
+                                                </Button>
+                                            </TableCell>
                                         </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {data.personal.edges.map(row => (
-                                            <TableRow key={row.node.id}>
-                                                <TableCell align="center">
-                                                    <Link component={RouterLink} color="inherit" to ={`/modify/update/${row.node.id}`}>{row.node.name}</Link>
-                                                </TableCell>
-                                                <TableCell align="center">{row.node.available ? "Activo" : "Inactivo"}</TableCell>
-                                                <TableCell align="center">{row.node.role === 'S'?"Profesor" : "Estudiante" }</TableCell>
-                                                <TableCell align="center">{row.node.children ? "SI" : "No"}</TableCell>
-                                                <TableCell align="center">{row.node.sex === 'F'?"Mujer" : "Hombre" }</TableCell>
-                                                <TableCell align="center">{wordDay(row.node.days).map((item, index, arr) => arr.length - 1 === index ? `${item}.` : `${item}, `)}</TableCell>
-                                                <TableCell align="center">
-                                                    <Button disabled={loading} variant="contained" component={RouterLink} to={`/modify/update/${row.node.id}`} >
-                                                        Modificar
-                                                    </Button>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                     </TableBody>
-                                </Table>
-                            </TableContainer>
-                            :
-                            <Typography color="textSecondary" align="center">
-                                No users for this project yet
-                            </Typography>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                        :
+                        <Typography color="textSecondary" align="center">
+                            No users for this project yet
+                        </Typography>
 
                 }
             </div>
-        <AppBar className={classes.searchBar} position="static" color="inherit" elevation={0}>
+            <AppBar className={classes.searchBar} position="static" color="inherit" elevation={0}>
                 <Toolbar>
                     <Grid container spacing={2} alignItems="center">
                         <Grid item>
                             <IconButton
                                 disabled={!(data?.personal?.pageInfo?.hasPreviousPage || previusPage === 'next')}
-                                onClick={() => {setPaginator({before: data.personal.pageInfo.startCursor, after: ""}); setPreviusPage('previous');}}
-                                >
+                                onClick={() => {
+                                    setPaginator({before: data.personal.pageInfo.startCursor, after: ""});
+                                    setPreviusPage('previous');
+                                }}
+                            >
                                 <NavigateBefore/>
                             </IconButton>
                             <IconButton
                                 disabled={!(data?.personal?.pageInfo?.hasNextPage || previusPage === 'previous')}
-                                onClick={() => {setPaginator({before: "" , after: data.personal.pageInfo.endCursor}); setPreviusPage('next');}}
+                                onClick={() => {
+                                    setPaginator({before: "", after: data.personal.pageInfo.endCursor});
+                                    setPreviusPage('next');
+                                }}
                             >
                                 <NavigateNext/>
                             </IconButton>

@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('personal', '0001_initial'),
-        ('repoPlan', '0001_initial'),
+        ('repo_plan', '0001_initial'),
     ]
 
     operations = [

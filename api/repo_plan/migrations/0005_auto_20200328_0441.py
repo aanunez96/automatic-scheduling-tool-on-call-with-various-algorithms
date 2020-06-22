@@ -7,7 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('personal', '0005_remove_person_shift'),
-        ('repoPlan', '0004_shift_person'),
+        ('repo_plan', '0004_shift_person'),
     ]
 
     operations = [

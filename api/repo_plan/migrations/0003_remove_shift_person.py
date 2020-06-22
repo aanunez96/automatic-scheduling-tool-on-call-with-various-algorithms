@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('repoPlan', '0002_auto_20200326_0632'),
+        ('repo_plan', '0002_auto_20200326_0632'),
     ]
 
     operations = [

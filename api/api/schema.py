@@ -3,7 +3,7 @@ from graphene import ObjectType
 from student.schema import StudentQuery
 from planning.schema import PersonalQuery, IterationQuery, PersonalMutation, MessageMutation, MessageQuery,IterationMutation
 from personal.schema import PersonQuery, DirectoryQuery
-from repoPlan.schema import ShiftQuery, ShiftMutation
+from repo_plan.schema import ShiftQuery, ShiftMutation
 
 
 class RootQuery(StudentQuery, PersonQuery, PersonalQuery, ShiftQuery, IterationQuery, MessageQuery, DirectoryQuery):

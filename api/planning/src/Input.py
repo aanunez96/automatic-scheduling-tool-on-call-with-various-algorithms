@@ -3,7 +3,7 @@ from planning.models import Personal
 from planning.models import Iteration
 from planning import settingApp
 from planning.src.Shift import Shift
-from repoPlan.FacadeRepoPlan import FacadeRepo
+from repo_plan.FacadeRepoPlan import FacadeRepo
 import pytz
 
 
@@ -53,7 +53,7 @@ class Input:
         else:
             date_end = Iteration.manager.date_last_iteration('P')
             total_days = date_end - date_last_iteration
-            for counter in range(0 if self.date_input else 1, total_days.days + 1):
+            for counter in range(0 if self.date_input else 1, total_days.days + 2):
                 date_shift = date_last_iteration + timedelta(days=counter)
                 for number in self.shif_amount(date_shift):
                     shifts.append(Shift(number=number, date=date_shift))

@@ -1,4 +1,4 @@
-from repoPlan.models import Shift
+from repo_plan.models import Shift
 
 
 class FacadeRepo:

@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('repoPlan', '0003_remove_shift_person'),
+        ('repo_plan', '0003_remove_shift_person'),
         ('personal', '0001_initial'),
     ]
 
@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='person',
             name='shift',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='repoPlan.Shift'),
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='repo_plan.Shift'),
         ),
     ]

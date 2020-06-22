@@ -1,4 +1,4 @@
-from specificAlgorithm.SpecificAlgorithm import SpecificAlgorithm
+from specific_algorithm.SpecificAlgorithm import SpecificAlgorithm
 from student_algorithm.static_algorithm import StaticAlgorithm
 from planning.constraints.ConstraintsWeak import Weekend, ShiftsRotations
 from planning.constraints.ConstraintsStrong import *

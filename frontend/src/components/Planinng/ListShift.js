@@ -6,13 +6,13 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
-import { withStyles } from '@material-ui/core/styles';
-import { gql } from 'apollo-boost';
-import {useQuery,useMutation} from "@apollo/react-hooks";
+import {withStyles} from '@material-ui/core/styles';
+import {gql} from 'apollo-boost';
+import {useQuery, useMutation} from "@apollo/react-hooks";
 import * as Moment from 'moment';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import IconButton from '@material-ui/core/IconButton';
-import {NavigateBefore ,Search,NavigateNext,Autorenew} from '@material-ui/icons';
+import {NavigateBefore, Search, NavigateNext, Autorenew} from '@material-ui/icons';
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
@@ -20,10 +20,10 @@ import TableCell from "@material-ui/core/TableCell";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TextField from '@material-ui/core/TextField';
-import { Link as RouterLink } from 'react-router-dom';
+import {Link as RouterLink} from 'react-router-dom';
 import Link from '@material-ui/core/Link';
 import {REFETCH_LIST_SHIFT} from '../../reactRedux';
-import {useDispatch,useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
 const styles = theme => ({
     paper: {
@@ -46,7 +46,7 @@ const styles = theme => ({
         margin: '40px 16px',
     },
     nameSelected: {
-        marginRight:    theme.spacing(4),
+        marginRight: theme.spacing(4),
     }
 });
 
@@ -74,8 +74,8 @@ updateShift(input:{
 
 function Content(props) {
     const [paginator, setPaginator] = useState({
-       before: "",
-       after:"",
+        before: "",
+        after: "",
     });
     const SHIFT_LIST = gql`
 query Shift(
@@ -88,7 +88,7 @@ query Shift(
   shift(
     date_Gte: $date_Gte,
     date_Lte: $date_Lte,
-    ${(paginator.before !== ""?"last": "first")}:20,
+    ${(paginator.before !== "" ? "last" : "first")}:20,
     before:$before,
     after:$after,
     person:$person
@@ -122,40 +122,48 @@ query Shift(
 }
 `;
     const [previusPage, setPreviusPage] = useState("");
-    const { classes } = props;
+    const {classes} = props;
     const dispatch = useDispatch();
     const [currentDate, setCurrentDate] = useState(Moment().format());
     const date_Gte = Moment(currentDate).startOf('month');
     const date_Lte = Moment(currentDate).endOf('month');
     const [textToFind, textToFindChange] = useState("");
-    const [person , setPerson]= useState("");
-    const { loading, data,refetch } = useQuery(SHIFT_LIST, {
-        variables: { date_Gte, date_Lte,before: paginator.before, after: paginator.after,person},fetchPolicy: "cache-and-network"
+    const [person, setPerson] = useState("");
+    const {loading, data, refetch} = useQuery(SHIFT_LIST, {
+        variables: {date_Gte, date_Lte, before: paginator.before, after: paginator.after, person},
+        fetchPolicy: "network-only"
     });
-    const [changePersonalMigration,{data:info}] = useMutation(UPDATE_SHIFT);
-    if (info){
+    const [changePersonalMigration, {data: info}] = useMutation(UPDATE_SHIFT);
+    if (info) {
         refetch();
     }
-    const [changePersonal ,setChangePersonal] = useState({
+    const [changePersonal, setChangePersonal] = useState({
         personal: false,
         personalName: "",
-        personRole:"",
-        shift:false,
+        personRole: "",
+        shift: false,
     });
-    const commitChange = (shift,personal,name,role) => {
-        if(changePersonal.personal){
-            changePersonalMigration({variables: {
-                person1:changePersonal.personal,
-                person2:personal,
-                shift1:changePersonal.shift,
-                shift2:shift,
-            }});
+    const commitChange = (shift, personal, name, role) => {
+        if (changePersonal.personal) {
+            changePersonalMigration({
+                variables: {
+                    person1: changePersonal.personal,
+                    person2: personal,
+                    shift1: changePersonal.shift,
+                    shift2: shift,
+                }
+            });
         }
-        setChangePersonal((changePersonal.personal)?{personal:false,shift:false,personalName:"",personRole:""}:{personal:personal,shift:shift,personalName:name,personRole:role});
+        setChangePersonal((changePersonal.personal) ? {
+            personal: false,
+            shift: false,
+            personalName: "",
+            personRole: ""
+        } : {personal: personal, shift: shift, personalName: name, personRole: role});
     };
 
     const selectFunction = (state) => {
-        if (state.listShift){
+        if (state.listShift) {
             refetch();
             dispatch({type: REFETCH_LIST_SHIFT});
         }
@@ -167,34 +175,40 @@ query Shift(
             <AppBar className={classes.searchBar} position="static" color="default" elevation={0}>
                 <Toolbar>
                     <Grid container spacing={2} alignItems="center">
-                       { (changePersonal.personal)?
+                        {(changePersonal.personal) ?
                             <Typography color="secondary" className={classes.nameSelected} align="center">
-                               {changePersonal.personalName}
+                                {changePersonal.personalName}
                             </Typography>
                             :
-                        <Grid item>
-                            <Button
-                                variant="outlined"
-                                className={classes.button}
-                                onClick={() => {setCurrentDate(Moment().format())}}
-                            >
-                                Mes Actual
-                            </Button>
-                            <IconButton onClick={() => {setCurrentDate(Moment(currentDate).subtract(1,"month").format())}} >
-                                <NavigateBefore/>
-                            </IconButton>
-                            <IconButton onClick={() => {setCurrentDate(Moment(currentDate).add(1,"month").format())}}>
-                                <NavigateNext/>
-                            </IconButton>
-                        </Grid>
-        }
+                            <Grid item>
+                                <Button
+                                    variant="outlined"
+                                    className={classes.button}
+                                    onClick={() => {
+                                        setCurrentDate(Moment().format())
+                                    }}
+                                >
+                                    Mes Actual
+                                </Button>
+                                <IconButton onClick={() => {
+                                    setCurrentDate(Moment(currentDate).subtract(1, "month").format())
+                                }}>
+                                    <NavigateBefore/>
+                                </IconButton>
+                                <IconButton onClick={() => {
+                                    setCurrentDate(Moment(currentDate).add(1, "month").format())
+                                }}>
+                                    <NavigateNext/>
+                                </IconButton>
+                            </Grid>
+                        }
                         <Grid item>
                             <Typography align="center">
-                                {Moment(Moment(currentDate).month()+1,"MM").format('MMMM') }, {Moment(currentDate).year()}
+                                {Moment(Moment(currentDate).month() + 1, "MM").format('MMMM')}, {Moment(currentDate).year()}
                             </Typography>
                         </Grid>
                         <Grid item>
-                            <Search className={classes.block} color="inherit" />
+                            <Search className={classes.block} color="inherit"/>
                         </Grid>
                         <Grid item xs>
                             <TextField
@@ -215,7 +229,9 @@ query Shift(
                                 variant="contained"
                                 color="primary"
                                 className={classes.addUser}
-                                onClick={() => {setPerson(textToFind)}}
+                                onClick={() => {
+                                    setPerson(textToFind)
+                                }}
                             >
                                 Buscar
                             </Button>
@@ -225,69 +241,78 @@ query Shift(
             </AppBar>
             <div className={classes.contentWrapper}>
                 {(loading) ?
-                        <LinearProgress />
+                    <LinearProgress/>
                     :
-                        (data?.shift?.edges)?
-                            <TableContainer component={Paper}>
-                                <Table className={classes.table} aria-label="customized table">
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell align="center">Nombre</TableCell>
-                                            <TableCell align="center">Fecha</TableCell>
-                                            <TableCell align="center">Hora</TableCell>
+                    (data?.shift?.edges) ?
+                        <TableContainer component={Paper}>
+                            <Table className={classes.table} aria-label="customized table">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell align="center">Nombre</TableCell>
+                                        <TableCell align="center">Fecha</TableCell>
+                                        <TableCell align="center">Hora</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {data.shift.edges.map(row => (
+                                        <TableRow key={row.node.id}>
+                                            <TableCell align="center">
+                                                {row.node.person.edges.map(item => (
+                                                    <div key={item.node.id}>
+                                                        <Link component={RouterLink} color="inherit"
+                                                              to={`/modify/update/${item.node.id}`}>{item.node.personal.name}</Link>
+                                                        <IconButton
+                                                            disabled={(changePersonal.personal) ? changePersonal.personRole !== item.node.personal.role || (changePersonal.personal !== item.node.id && changePersonal.shift === row.node.id) : false}
+                                                            color={(changePersonal.personal) ? (item.node.id === changePersonal.personal && row.node.id === changePersonal.shift) ? "secondary" : "primary" : "default"}
+                                                            onClick={() => commitChange(row.node.id, item.node.id, item.node.personal.name, item.node.personal.role)}
+                                                        >
+                                                            <Autorenew/>
+                                                        </IconButton>
+                                                    </div>
+                                                ))}
+                                            </TableCell>
+                                            <TableCell
+                                                align="center">{Moment(row.node.date).format("DD-MM-YYYY")}</TableCell>
+                                            <TableCell
+                                                align="center">{`${Moment(row.node.date).format("LT")}`}</TableCell>
                                         </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {data.shift.edges.map(row => (
-                                            <TableRow key={row.node.id}>
-                                                <TableCell align="center">
-                                                    {row.node.person.edges.map(item => (
-                                                        <div key={item.node.id}>
-                                                            <Link component={RouterLink} color="inherit" to ={`/modify/update/${item.node.id}`}>{item.node.personal.name}</Link>
-                                                            <IconButton
-                                                                disabled={(changePersonal.personal)? changePersonal.personRole !== item.node.personal.role||(changePersonal.personal !==item.node.id && changePersonal.shift ===row.node.id) : false}
-                                                                color={(changePersonal.personal)?(item.node.id === changePersonal.personal && row.node.id === changePersonal.shift)?"secondary":"primary" : "default"}
-                                                                onClick={()=>commitChange(row.node.id,item.node.id,item.node.personal.name,item.node.personal.role)}
-                                                            >
-                                                                <Autorenew/>
-                                                            </IconButton>
-                                                        </div>
-                                                    ))}
-                                                </TableCell>
-                                                <TableCell align="center">{Moment(row.node.date).format("DD-MM-YYYY")}</TableCell>
-                                                <TableCell align="center">{`${Moment(row.node.date).format("LT")}`}</TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                            :
-                            <Typography color="textSecondary" align="center">
-                                No users for this project yet
-                            </Typography>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                        :
+                        <Typography color="textSecondary" align="center">
+                            No users for this project yet
+                        </Typography>
 
                 }
             </div>
             <AppBar className={classes.searchBar} position="static" color="inherit" elevation={0}>
-                    <Toolbar>
-                        <Grid container spacing={2} alignItems="center">
-                            <Grid item>
-                                <IconButton
-                                    disabled={!(data?.shift?.pageInfo?.hasPreviousPage || previusPage === 'next')}
-                                    onClick={() => {setPaginator({before: data.shift.pageInfo.startCursor, after: ""}); setPreviusPage('previous');}}
-                                    >
-                                    <NavigateBefore/>
-                                </IconButton>
-                                <IconButton
-                                    onClick={() => {setPaginator({before:"", after: data.shift.pageInfo.endCursor}); setPreviusPage('next');}}
-                                    disabled={!(data?.shift?.pageInfo?.hasNextPage || previusPage === 'previous')}
-                                >
-                                    <NavigateNext/>
-                                </IconButton>
-                            </Grid>
+                <Toolbar>
+                    <Grid container spacing={2} alignItems="center">
+                        <Grid item>
+                            <IconButton
+                                disabled={!(data?.shift?.pageInfo?.hasPreviousPage || previusPage === 'next')}
+                                onClick={() => {
+                                    setPaginator({before: data.shift.pageInfo.startCursor, after: ""});
+                                    setPreviusPage('previous');
+                                }}
+                            >
+                                <NavigateBefore/>
+                            </IconButton>
+                            <IconButton
+                                onClick={() => {
+                                    setPaginator({before: "", after: data.shift.pageInfo.endCursor});
+                                    setPreviusPage('next');
+                                }}
+                                disabled={!(data?.shift?.pageInfo?.hasNextPage || previusPage === 'previous')}
+                            >
+                                <NavigateNext/>
+                            </IconButton>
                         </Grid>
-                    </Toolbar>
-                </AppBar>
+                    </Grid>
+                </Toolbar>
+            </AppBar>
         </Paper>
     );
 }

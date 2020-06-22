@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from django.shortcuts import render
 from planning.src.Composer import Composer
-from repoPlan.models import Shift
+from repo_plan.models import Shift
 
 
 # Create your views here.

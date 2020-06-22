@@ -4,7 +4,7 @@ from planning import settingApp
 from planning.models import Iteration
 from planning.src.Plan import Plan
 from planning.settingApp import CONSTRAINT_PROFESOR_STRONG,CONSTRAINT_STUDENT_STRONG
-from repoPlan.models import Shift
+from repo_plan.models import Shift
 from planning.constraints.ConstraintsStrong import OnlyOnceAMonth
 import copy
 from django.db import transaction, IntegrityError
