@@ -1,18 +1,19 @@
-from planning.settingApp import *
 from planning.src.Plan import Plan
-from planning.src import Shift
+from planning.settingApp import CONSTRAINT_PROFESOR_WEAK, CONSTRAINT_STUDENT_WEAK
+import copy
 
 
 class CompareSolutions:
     def compare(self, plans, type_guard):
         if len(plans) == 1:
-            plans[0].heuristic = self.heuristic(plans[0].shifts, type_guard)
+            plans[0].heuristic = self.heuristic(copy.deepcopy(plans[0].shifts), type_guard)
+            print(plans.shifts[0].date)
             return plans[0]
         else:
             plan_to_return = Plan(None, None)
             for plan in plans:
-                plan.heuristic = self.heuristic(plan.shifts, type_guard)
-                if plan.heuristic > plan_to_return.heuristic:
+                plan.heuristic = self.heuristic(copy.deepcopy(plan.shifts), type_guard)
+                if plan.heuristic < plan_to_return.heuristic:
                     plan_to_return = plan
 
             return plan_to_return

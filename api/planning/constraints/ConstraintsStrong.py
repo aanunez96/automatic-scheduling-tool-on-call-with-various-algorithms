@@ -6,13 +6,14 @@ class WithSmallChildren(Constraint):
         if personal.sex == 'M' or personal.children is False:
             return True
         else:
-            if shift.date.strftime('%a') != 'Sat' or shift.date.strftime('%a') != 'Sun':
-                return False
+            if shift.date.strftime('%a') == 'Sat' or shift.date.strftime('%a') == 'Sun':
+                return True
             else:
-                if shift.number == (7 or 8):
-                    return True
-                else:
-                    return False
+                # if shift.number == (7 or 8):
+                #     return True
+                # else:
+                #     return False
+                return False
 
 
 class OnlyOnceAMonth(Constraint):

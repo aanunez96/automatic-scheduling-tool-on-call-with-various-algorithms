@@ -20,7 +20,7 @@ class Composer:
         self.plans_profesor = []
         self.message = message
 
-    def compose(self, algorithm_profesor, algorithm_student, guard, date_profesor,date_student):
+    def compose(self, algorithm_profesor, algorithm_student, guard, date_profesor, date_student):
         returned = []
         compare = CompareSolutions()
         if guard == 'P' or not guard:
@@ -31,6 +31,7 @@ class Composer:
             self.message.percent = 50
             self.message.save()
             best_solution_profesor = compare.compare(self.plans_profesor, 'P')
+            # print(best_solution_profesor)
             self.message.percent = 70
             self.message.save()
             returned.append(self.save(best_solution_profesor, 'P'))
@@ -47,12 +48,12 @@ class Composer:
 
         return returned
 
-    def generateAll(self, input,typeGuard):
-        algorithms = settingApp.ALGORITHM_PROFESOR if typeGuard == 'P' else settingApp.ALGORITHM_STUDENT
+    def generateAll(self, input,type_guard):
+        algorithms = settingApp.ALGORITHM_PROFESOR if type_guard == 'P' else settingApp.ALGORITHM_STUDENT
         for name_algorithm, algorithm in algorithms.items():
             shifts = copy.deepcopy(input.shifts)
             plan = Plan(algorithm.generate(input.personal, shifts, input.constraints_strong, input.constraints_weak), name_algorithm)
-            self.plans_profesor.append(plan) if typeGuard == 'P' else self.plans_student.append(plan)
+            self.plans_profesor.append(plan) if type_guard == 'P' else self.plans_student.append(plan)
 
     def generateForAlgorithm(self, input, algorithms, type_guard):
         algorithms_setting = settingApp.ALGORITHM_PROFESOR if type_guard == 'P' else settingApp.ALGORITHM_STUDENT
@@ -62,6 +63,7 @@ class Composer:
             self.plans_profesor.append(plan) if type_guard == 'P' else self.plans_student.append(plan)
 
     def save(self, plan, type_guard):
+
         try:
             with transaction.atomic():
                 number = Iteration.manager.last_iteration_number(type_guard)+1
@@ -70,8 +72,8 @@ class Composer:
                     heuristic=plan.heuristic,
                     number=number,
                     type_guard=type_guard,
-                    date_start=plan.shifts[0].date,
-                    date_end=plan.shifts[-1].date,
+                    date_start=(plan.shifts[0]).date,
+                    date_end=(plan.shifts[-1]).date,
                     message=self.message
                 )
                 iteration.save()
