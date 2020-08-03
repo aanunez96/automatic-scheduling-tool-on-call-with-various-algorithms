@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'django_filters',
     'corsheaders',
 
-    'student.apps.StudentConfig',
     'planning.apps.PlanningConfig',
     'repo_plan.apps.RepoplanConfig',
     'personal.apps.PersonalConfig',

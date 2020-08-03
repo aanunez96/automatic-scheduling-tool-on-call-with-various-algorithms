@@ -17,6 +17,7 @@ class ShiftFilter(django_filters.FilterSet):
         fields = {
             'date': ['lte', 'gte'],
             'number': ['exact'],
+            'id': ['exact'],
             'person': ['exact'],
             'iteration': ['exact'],
         }

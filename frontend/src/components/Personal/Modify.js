@@ -183,12 +183,14 @@ function Content(props) {
 `;
     const [addPersonal, {data: infoMutate}] = useMutation(ADD_PERSONAL);
     const [weekDay, setWeekDay] = useState([]);
+    const [available, setAvailable] = useState(true);
+    const [children, setChildren] = useState(false);
     const [render, setRender] = useState({day: false, modal: false});
     const [openModal, setOpenModal] = useState(false);
 
     let personal = false;
     const {loading, data} = useQuery(USER_LIST, {
-        variables: {uciId: idPersonal},
+        variables: {uciId: idPersonal},fetchPolicy: "network-only"
     });
     if (data) {
         if (action === "add") {
@@ -198,6 +200,8 @@ function Content(props) {
             if (!render.day) {
                 setRender({...render, day: true});
                 setWeekDay(wordDay(personal.days));
+                setAvailable(personal.available);
+                setChildren(personal.children);
             }
         }
     }
@@ -206,8 +210,6 @@ function Content(props) {
         setOpenModal(true);
     }
     const theme = useTheme();
-    const [available, setAvailable] = useState(true);
-    const [children, setChildren] = useState(false);
     const handleChange = (event) => {
         setWeekDay(event.target.value);
     };
@@ -247,8 +249,8 @@ function Content(props) {
 
                                     <TableRow color="secundary" key={personal.id}>
                                         <TableCell align="center">{personal.name}</TableCell>
-                                        <TableCell align="center">{personal.sex}</TableCell>
-                                        <TableCell align="center">{personal.role}</TableCell>
+                                        <TableCell align="center">{personal.sex === 'F' ? "Mujer" : "Hombre"}</TableCell>
+                                        <TableCell align="center">{personal.role === 'P' ? "Profesor" : "Estudiante"}</TableCell>
                                         <TableCell align="center">
                                             <Switch
                                                 checked={children}

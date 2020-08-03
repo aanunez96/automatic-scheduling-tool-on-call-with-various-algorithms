@@ -38,6 +38,3 @@ services:
       - ./dev/data/mysql:/var/lib/mysql
     ports:
       - '3306:3306'
-
-#adrian-at-261399422204
-#HQ5YUYdWrh51pNCVOZ9SkXG6VK5qUMBgyHFxyXtmr78=

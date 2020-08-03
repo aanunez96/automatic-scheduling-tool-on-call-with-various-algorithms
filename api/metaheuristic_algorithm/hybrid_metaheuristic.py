@@ -5,21 +5,18 @@ import copy
 
 
 class HybridMetaHeuristicGRASP(Algorithm):
-    # def generate(self, personal, shifts, constraint_strong, constraint_weak):
-    #     domain_profesors = self.domain(personal, shifts, constraint_strong)
-    #     for profesor, domain in domain_profesors.items():
-    #         print(profesor)
-    #         print(domain)
 
     def generate(self, personal, shifts, constraint_strong, constraint_weak):
         domain_profesors = self.domain(personal, shifts, constraint_strong)
         profesors = []
         reference_shift = []
         shift_assignment = {}
+
         for index, shift in enumerate(shifts):
             reference_shift.append(shift.id)
             profesors.append(personal[index].id)
             shift_assignment[personal[index].id] = -1
+
         empty_shift = copy.deepcopy(reference_shift)
         profesors_outside = copy.deepcopy(profesors)
         cambio = True
@@ -33,58 +30,44 @@ class HybridMetaHeuristicGRASP(Algorithm):
             cambio = False
 
             for profesor in profesors:
-                # print('<<<<<profesor>>>>>')
-                # print(profesor)
+
                 possible_shift = []
                 selected_shift = False
                 aux_heuristic_1 = 0
                 aux_heuristic_2 = 0
-                new_shift = False
                 add_profesor = False
 
                 for shift_x_select in domain_profesors[profesor]:
                     if shift_x_select in empty_shift:
                         possible_shift.append(shift_x_select)
-# TODO: revizar lo de las mujeres con niños
-# TODO: dar prioridad a mujeres
-                # esto es para que los que tengan niños tengan priridad en la asiganacion
+
+                # esto es para que las mujeres y las que tengan niños tengan prioridad en la asiganacion
                 suport_woman = len(constraint_weak) + 1 if personal[profesors.index(profesor)].sex == 'F' else 0
                 suport_woman = suport_woman * 2 if personal[profesors.index(profesor)].children else suport_woman
+
                 # esto es para compensar la heuristica pa que mientras menos turnos menos heuristica tengas
                 suport_heuristic = len(possible_shift) - suport_woman
-                # print('<<<<<possible_shift>>>>>')
-                # print(possible_shift)
 
                 if profesor in profesors_outside:
                     if possible_shift:
                         selected_shift = choice(possible_shift)
-
-                        # print('<<<<<selected_shift add>>>>>')
-                        # print(selected_shift)
-
                         possible_shift.remove(selected_shift)
                         add_profesor = True
                 else:
                     selected_shift = copy.deepcopy(shift_assignment[profesor])
-                    # print('<<<<<selected_shift>>>>>')
-                    # print(selected_shift)
 
                 aux_profesor = copy.deepcopy(profesors_outside)
 
-                # print('<<<<<aux_profesor>>>>>')
-                # print(aux_profesor)
-
                 if profesor in aux_profesor:
                     aux_profesor.remove(profesor)
-                new_profesor = False if personal[profesors.index(profesor)].children and personal[profesors.index(profesor)].sex == 'F' else self.la_pala(selected_shift, aux_profesor, domain_profesors)
+
+                new_profesor = False if personal[profesors.index(profesor)].children and personal[profesors.index(profesor)].sex == 'F' else self.search_profesor_for_sustitution(selected_shift, aux_profesor, domain_profesors)
+
                 if new_profesor and possible_shift:
                     new_shift = choice(possible_shift)
                     for constraint in constraint_weak:
                         aux_heuristic_1 += constraint.evaluate_heuristic(shifts[reference_shift.index(new_shift)], personal[profesors.index(profesor)])
                         aux_heuristic_2 += constraint.evaluate_heuristic(shifts[reference_shift.index(selected_shift)], personal[profesors.index(new_profesor)])
-                    # print('<<<<<heuristica 2 >>>>>')
-                    # print(total_heuristic)
-                    # print((0 - aux_heuristic_2) + (0 - aux_heuristic_1))
 
                     if total_heuristic > (aux_heuristic_2 + aux_heuristic_1)/2 + suport_heuristic:
                         total_heuristic = (aux_heuristic_2 + aux_heuristic_1)/2 + suport_heuristic
@@ -96,9 +79,7 @@ class HybridMetaHeuristicGRASP(Algorithm):
                     for constraint in constraint_weak:
                         aux_heuristic_1 += constraint.evaluate_heuristic(
                             shifts[reference_shift.index(selected_shift)], personal[profesors.index(profesor)])
-                    # print('<<<<<heuristica>>>>>')
-                    # print(total_heuristic)
-                    # print(aux_heuristic_1)
+
                     if total_heuristic > aux_heuristic_1 + suport_heuristic:
                         total_heuristic = aux_heuristic_1 + suport_heuristic
                         profesor_1 = profesor
@@ -122,14 +103,9 @@ class HybridMetaHeuristicGRASP(Algorithm):
         for profe, shift in shift_assignment.items():
             if shift != -1:
                 turno = shifts[reference_shift.index(shift)]
-                profesorpap = personal[profesors.index(profe)]
-                turno.personal.append(profesorpap)
-# #                shifts[reference_shift.index(shift)].personal.append(personal[profesors.index(profe)])
-#         for shift_print in shifts:
-#             print('<<<<turno>>>>')
-#             print(shift_print.id)
-#             print(shift_print.date)
-#             print(shift_print.personal)
+                profesor = personal[profesors.index(profe)]
+                turno.personal.append(profesor)
+
         return shifts
 
 # TODO hacer lo la permuta al mejor vecino
@@ -151,7 +127,7 @@ class HybridMetaHeuristicGRASP(Algorithm):
             domain_profesors[profesor.id] = domain_profesor
         return domain_profesors
 
-    def la_pala(self, selected_shift, profesors, domain):
+    def search_profesor_for_sustitution(self, selected_shift, profesors, domain):
         possible_profesor = []
         for profesor in profesors:
             if selected_shift in domain[profesor]:

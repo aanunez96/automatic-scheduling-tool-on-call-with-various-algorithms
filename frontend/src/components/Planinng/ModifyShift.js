@@ -22,6 +22,9 @@ import Button from '@material-ui/core/Button';
 import Link from '@material-ui/core/Link';
 import IconButton from '@material-ui/core/IconButton';
 import {NavigateBefore, NavigateNext} from '@material-ui/icons';
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
+import Avatar from "@material-ui/core/Avatar";
 
 const styles = theme => ({
     paper: {
@@ -44,19 +47,6 @@ const styles = theme => ({
         margin: '40px 16px',
     },
 });
-const week = [
-    'Lunes',
-    'Martes',
-    'Miercoles',
-    'Jueves',
-    'Viernes',
-    'Sabado',
-    'Domingo',
-];
-const wordDay = (item) => {
-    let index = [].filter.call(item, e => e !== ",");
-    return index.map(e => week[parseInt(e, 10) - 1]);
-};
 
 function Content(props) {
     const [paginator, setPaginator] = useState({
@@ -86,10 +76,7 @@ function Content(props) {
             id
             name
             available
-            sex
             role
-            children
-            days
           }
         }
       }
@@ -106,6 +93,31 @@ function Content(props) {
     return (
         <Paper className={classes.paper}>
             <AppBar className={classes.searchBar} position="static" color="default" elevation={0}>
+                <Grid>
+                    <Card>
+                        <CardContent>
+                            <Typography align="center" color={"textSecondary"}>
+                                {`turno${'aaa'}`}
+                            </Typography>
+                            <Typography align="center" color={"textSecondary"}>
+                                Personal
+                            </Typography>
+                            {row.node.person.edges.map(item => (
+                                <Grid container key={row.node.id}>
+                                    <Avatar aria-label="recipe"
+                                            className={(item.node.personal.role === "P") ? classes.avatarP : classes.avatars}>
+                                        {(item.node.personal.role === "P") ? "P" : "S"}
+                                    </Avatar>
+                                    <Typography
+                                        color={(item.node.personal.id === personal.id) ? "textPrimary" : "textSecondary"}
+                                        align="inherit">
+                                        {item.node.personal.name}
+                                    </Typography>
+                                </Grid>
+                            ))}
+                        </CardContent>
+                    </Card>
+                </Grid>
                 <Toolbar>
                     <Grid container spacing={2} alignItems="center">
                         <Grid item>
@@ -159,9 +171,6 @@ function Content(props) {
                                         <TableCell align="center">Nombre</TableCell>
                                         <TableCell align="center">Disponible</TableCell>
                                         <TableCell align="center">Rol</TableCell>
-                                        <TableCell align="center">Hijos</TableCell>
-                                        <TableCell align="center">Sexo</TableCell>
-                                        <TableCell align="center">Dias Inasignables</TableCell>
                                         <TableCell align="center"></TableCell>
                                     </TableRow>
                                 </TableHead>
@@ -177,10 +186,6 @@ function Content(props) {
                                             <TableCell
                                                 align="center">{row.node.role === 'P' ? "Profesor" : "Estudiante"}</TableCell>
                                             <TableCell align="center">{row.node.children ? "SI" : "No"}</TableCell>
-                                            <TableCell
-                                                align="center">{row.node.sex === 'F' ? "Mujer" : "Hombre"}</TableCell>
-                                            <TableCell
-                                                align="center">{wordDay(row.node.days).map((item, index, arr) => arr.length - 1 === index ? `${item}.` : `${item}, `)}</TableCell>
                                             <TableCell align="center">
                                                 <Button disabled={loading} variant="contained" component={RouterLink}
                                                         to={`/modify/update/${row.node.id}`}>

@@ -37,6 +37,7 @@ class ManagerShift(models.Manager):
 
 
 class Shift(models.Model):
+    id = models.AutoField(primary_key=True)
     date = models.DateTimeField()
     number = models.IntegerField(blank=False, null=False)
     person = models.ManyToManyField(Person)

@@ -7,7 +7,6 @@ class CompareSolutions:
     def compare(self, plans, type_guard):
         if len(plans) == 1:
             plans[0].heuristic = self.heuristic(copy.deepcopy(plans[0].shifts), type_guard)
-            print(plans.shifts[0].date)
             return plans[0]
         else:
             plan_to_return = Plan(None, None)
