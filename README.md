@@ -26,6 +26,7 @@ docker exec -it guardia-api  bash
 ```
 inside the container:
 ```bash
+python manage.py migrate
 python manage.py runserver 0.0.0.0:8000
 ```
   
